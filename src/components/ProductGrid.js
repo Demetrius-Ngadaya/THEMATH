@@ -43,7 +43,7 @@ export default function ProductGrid({ products, isLoading }) {
                             {[...Array(5)].map((_, i) => (
                                 <HiOutlineStar
                                     key={i}
-                                    className={`h-4 w-4 ${
+                                    className={`h-4 w-4 Tsh{
                                         i < Math.floor(product.rating)
                                             ? "text-yellow-400 fill-current"
                                             : "text-gray-300 dark:text-gray-600"
