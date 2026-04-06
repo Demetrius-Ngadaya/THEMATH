@@ -28,7 +28,7 @@ export default function AboutPage() {
                     animate={{ opacity: 1, y: 0 }}
                     className="relative z-10 px-6 py-16 text-center"
                 >
-                    <h1 className="text-4xl font-bold text-white mb-4">About ShopHub</h1>
+                    <h1 className="text-4xl font-bold text-white mb-4">About Sci-Math Creation</h1>
                     <p className="text-xl text-white/90 max-w-2xl mx-auto">
                         Your premier destination for quality products and exceptional shopping experience.
                     </p>
@@ -44,7 +44,7 @@ export default function AboutPage() {
                 >
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Story</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                        Founded in 2020, ShopHub began with a simple mission: to make quality products accessible to everyone.
+                        Founded in 2025, Sci-Math Creation began with a simple mission: to make quality products accessible to everyone.
                         What started as a small online store has grown into a trusted marketplace serving millions of customers worldwide.
                     </p>
                     <p className="text-gray-600 dark:text-gray-400">

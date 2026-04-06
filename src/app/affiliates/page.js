@@ -194,7 +194,7 @@ export default function AffiliatesPage() {
                 >
                     <h2 className="text-2xl font-bold text-white mb-4">Ready to Start Earning?</h2>
                     <p className="text-white/90 mb-6">
-                        Join thousands of affiliates already earning with ShopHub
+                        Join thousands of affiliates already earning with Sci-Math Creation
                     </p>
                     <button className="px-6 py-3 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-100 transition-colors">
                         Apply Now

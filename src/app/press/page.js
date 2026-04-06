@@ -13,21 +13,21 @@ export default function PressPage() {
     const pressReleases = [
         {
             id: 1,
-            title: "ShopHub Raises $50M in Series B Funding",
+            title: "Sci-Math Creation Raises $50M in Series B Funding",
             date: "2024-01-15",
             summary: "Leading e-commerce platform secures funding to expand into new markets.",
             link: "/press/releases/funding-2024"
         },
         {
             id: 2,
-            title: "ShopHub Launches AI-Powered Recommendation Engine",
+            title: "Sci-Math Creation Launches AI-Powered Recommendation Engine",
             date: "2023-12-10",
             summary: "New feature helps customers discover products tailored to their preferences.",
             link: "/press/releases/ai-launch"
         },
         {
             id: 3,
-            title: "ShopHub Expands to European Market",
+            title: "Sci-Math Creation Expands to European Market",
             date: "2023-11-05",
             summary: "Opening new headquarters in London and Berlin.",
             link: "/press/releases/europe-expansion"
@@ -205,7 +205,7 @@ export default function PressPage() {
                     For press inquiries, please contact our media relations team
                 </p>
                 <div className="space-y-2 text-white/80">
-                    <p>press@shophub.com</p>
+                    <p>press@Sci-Math Creation.com</p>
                     <p>+1 (555) 123-4567</p>
                 </div>
             </section>

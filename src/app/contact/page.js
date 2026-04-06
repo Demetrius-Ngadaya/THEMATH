@@ -15,7 +15,7 @@ export default function ContactPage() {
     }
 
     const contactInfo = [
-        { icon: HiOutlineMail, title: "Email", value: "support@shophub.com", link: "mailto:support@shophub.com" },
+        { icon: HiOutlineMail, title: "Email", value: "support@Sci-Math Creation.com", link: "mailto:support@Sci-Math Creation.com" },
         { icon: HiOutlinePhone, title: "Phone", value: "+1 (555) 123-4567", link: "tel:+15551234567" },
         { icon: HiOutlineLocationMarker, title: "Address", value: "123 Commerce St, City, Country" },
         { icon: HiOutlineClock, title: "Business Hours", value: "Mon-Fri: 9AM - 6PM" },

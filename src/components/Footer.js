@@ -177,7 +177,7 @@ export default function Footer() {
                 <div className="mt-12 grid grid-cols-1 gap-4 border-t border-gray-200 pt-8 dark:border-gray-800 sm:grid-cols-3">
                     <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                         <HiOutlineMail className="h-5 w-5" />
-                        <span>support@shophub.com</span>
+                        <span>support@Sci-Math Creation.com</span>
                     </div>
                     <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                         <HiOutlinePhone className="h-5 w-5" />
@@ -193,7 +193,7 @@ export default function Footer() {
                 <div className="mt-8 flex flex-col items-center justify-between border-t border-gray-200 pt-8 dark:border-gray-800 sm:flex-row">
                     {/* Copyright */}
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        © {currentYear} ShopHub. All rights reserved.
+                        © {currentYear} Sci-Math Creation. All rights reserved.
                     </p>
 
                     {/* Social Links */}
