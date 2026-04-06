@@ -43,7 +43,7 @@ export default function ProductGrid({ products, isLoading }) {
                             {[...Array(5)].map((_, i) => (
                                 <HiOutlineStar
                                     key={i}
-                                    className={`h-4 w-4 Tsh{
+                                    className={`h-4 w-4 ${
                                         i < Math.floor(product.rating)
                                             ? "text-yellow-400 fill-current"
                                             : "text-gray-300 dark:text-gray-600"
@@ -56,11 +56,11 @@ export default function ProductGrid({ products, isLoading }) {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                ${product.price}
+                                TSh {product.price.toLocaleString()}
                             </span>
                             {product.originalPrice && (
                                 <span className="text-sm text-gray-500 line-through">
-                                    ${product.originalPrice}
+                                    TSh {product.originalPrice.toLocaleString()}
                                 </span>
                             )}
                         </div>
