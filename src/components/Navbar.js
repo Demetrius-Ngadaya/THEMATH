@@ -11,7 +11,7 @@ import {
     HiOutlineShoppingCart,
     HiOutlineHeart,
     HiOutlineUser,
-    HiOutlineSearch,
+    // HiOutlineSearch,
     HiOutlineSun,
     HiOutlineMoon,
     HiMenu,
@@ -19,12 +19,12 @@ import {
     HiOutlineChevronDown
 } from "react-icons/hi"
 import MegaMenu from "./MegaMenu"
-import SearchBar from "./SearchBar"
+// import SearchBar from "./SearchBar"
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
-    const [showSearch, setShowSearch] = useState(false)
+    // const [showSearch, setShowSearch] = useState(false)
     const { theme, setTheme } = useTheme()
     const pathname = usePathname()
 
