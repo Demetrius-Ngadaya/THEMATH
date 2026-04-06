@@ -17,9 +17,9 @@ export default function Home() {
     setTimeout(() => {
       setFeaturedProducts([
         { id: 1, name: "Product 1", price: 42000, image: "/product1.jpg", rating: 4.5 },
-        { id: 2, name: "Product 2", price: 35000.99, image: "/product2.jpg", rating: 4.8 },
-        { id: 3, name: "Product 3", price: 29000.99, image: "/product3.jpg", rating: 4.2 },
-        { id: 4, name: "Product 4", price: 51000.99, image: "/product4.jpg", rating: 4.9 },
+        { id: 2, name: "Product 2", price: 35000, image: "/product2.jpg", rating: 4.8 },
+        { id: 3, name: "Product 3", price: 29000, image: "/product3.jpg", rating: 4.2 },
+        { id: 4, name: "Product 4", price: 51000, image: "/product4.jpg", rating: 4.9 },
       ])
       setIsLoading(false)
     }, 1000)
@@ -47,7 +47,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="text-4xl font-bold tracking-tight text-white sm:text-3xl lg:text-3xl"
             >
               Unique Apparel and Accessories Inspired by Science and the Mathematics
             </motion.h1>
@@ -84,8 +84,8 @@ export default function Home() {
               style={{
                 width: Math.random() * 300 + 50,
                 height: Math.random() * 300 + 50,
-                left: `Tsh{Math.random() * 100}%`,
-                top: `Tsh{Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
               }}
               animate={{
                 x: [0, Math.random() * 100 - 50],
