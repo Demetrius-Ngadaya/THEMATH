@@ -114,12 +114,12 @@ export default function Navbar() {
                         {/* Right Icons */}
                         <div className="flex items-center space-x-4">
                             {/* Search Toggle */}
-                            <button
+                            {/* <button
                                 onClick={() => setShowSearch(!showSearch)}
                                 className="rounded-full p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
                             >
                                 <HiOutlineSearch className="h-5 w-5" />
-                            </button>
+                            </button> */}
 
                             {/* Theme Toggle */}
                             <button
