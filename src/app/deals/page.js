@@ -79,8 +79,8 @@ export default function DealsPage() {
                                 <div className="aspect-square bg-gray-200 dark:bg-gray-800 rounded-xl mb-4" />
                                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{deal.name}</h3>
                                 <div className="flex items-center gap-2 mb-4">
-                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">${deal.price}</span>
-                                    <span className="text-sm text-gray-500 line-through">${deal.originalPrice}</span>
+                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">TSh {deal.price.toLocaleString()}</span>
+                                    <span className="text-sm text-gray-500 line-through">TSh {deal.originalPrice.toLocaleString()}</span>
                                 </div>
                                 <CountdownTimer initialSeconds={deal.endsIn} />
                             </div>
