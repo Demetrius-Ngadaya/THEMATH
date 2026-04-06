@@ -16,9 +16,9 @@ export default function Products() {
             .catch(() => {
 
                 setProducts([
-                    { id: 1, name: "Laptop", price: 800, image: "/laptop.jpg" },
-                    { id: 2, name: "Phone", price: 400, image: "/phone.jpg" },
-                    { id: 3, name: "Headphones", price: 100, image: "/headphones.jpg" },
+                    { id: 1, name: "CLothes", price: 50000, image: "/laptop.jpg" },
+                    { id: 2, name: "Phone case", price: 20000, image: "/phone.jpg" },
+                    { id: 3, name: "Watches", price: 25000, image: "/headphones.jpg" },
                 ])
 
             })
