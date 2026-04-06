@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
@@ -58,15 +59,34 @@ export default function Navbar() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
                         {/* Logo */}
-                        <Link href="/" className="flex items-center space-x-2">
+                        <Link href="/" className="flex items-center space-x-3">
                             <motion.div
-                                whileHover={{ rotate: 360 }}
-                                transition={{ duration: 0.5 }}
-                                className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600"
-                            />
-                            <span className="text-xl font-bold text-gray-900 dark:text-white">ShopHub</span>
+                                whileHover={{
+                                    scale: 1.1,
+                                    rotate: 360,
+                                    transition: { duration: 0.5 }
+                                }}
+                                className="relative h-12 w-12"
+                            >
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-800 to-purple-50 animate-pulse opacity-20" /> {/* Glow effect */}
+                                <Image
+                                    src="/math.png"
+                                    alt="Sci-Math Creation Logo"
+                                    width={48}
+                                    height={48}
+                                    className="rounded-full object-cover ring-2 ring-white dark:ring-gray-800 shadow-xl"
+                                    priority
+                                />
+                            </motion.div>
+                            <div className="flex flex-col">
+                                <span className="text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+                                    Sci-Math Creation
+                                </span>
+                                {/* <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    Your trusted partner
+                                </span> */}
+                            </div>
                         </Link>
-
                         {/* Desktop Navigation */}
                         <div className="hidden lg:flex lg:items-center lg:space-x-8">
                             {navLinks.map((link) => (
