@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { API } from "@/services/api"
 import ProductGrid from "@/components/ProductGrid"
-import Filters from "@/components/Filters"
+// import Filters from "@/components/Filters"
 
 export default function Products() {
 
@@ -29,11 +29,11 @@ export default function Products() {
 
         <div className="grid grid-cols-5 gap-6 py-10">
 
-            <div>
+            {/* <div>
 
                 <Filters />
 
-            </div>
+            </div> */}
 
             <div className="col-span-4">
 
