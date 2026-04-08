@@ -11,8 +11,8 @@ export default function ProductPage() {
 
     const product = {
         id,
-        name: "Demo Product",
-        price: 200,
+        name: "Watch",
+        price: 22000,
         description: "High quality product",
         image: "/product.jpg"
     }

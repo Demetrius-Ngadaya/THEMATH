@@ -27,27 +27,27 @@ export default function Footer() {
             { label: "Categories", href: "/categories" },
             { label: "Deals", href: "/deals" },
             { label: "New Arrivals", href: "/new-arrivals" },
-            { label: "Best Sellers", href: "/best-sellers" },
+            // { label: "Best Sellers", href: "/best-sellers" },
         ],
         account: [
-            { label: "My Account", href: "/account" },
-            { label: "Orders", href: "/orders" },
+            // { label: "My Account", href: "/account" },
+            // { label: "Orders", href: "/orders" },
             { label: "Wishlist", href: "/wishlist" },
             { label: "Cart", href: "/cart" },
         ],
         support: [
-            { label: "Help Center", href: "/help" },
-            { label: "FAQs", href: "/faqs" },
-            { label: "Shipping Info", href: "/shipping" },
-            { label: "Returns", href: "/returns" },
+            // { label: "Help Center", href: "/help" },
+            // { label: "FAQs", href: "/faqs" },
+            // { label: "Shipping Info", href: "/shipping" },
+            // { label: "Returns", href: "/returns" },
             { label: "Contact Us", href: "/contact" },
         ],
         company: [
             { label: "About Us", href: "/about" },
-            { label: "Careers", href: "/careers" },
-            { label: "Blog", href: "/blog" },
-            { label: "Press", href: "/press" },
-            { label: "Affiliates", href: "/affiliates" },
+            // { label: "Careers", href: "/careers" },
+            // { label: "Blog", href: "/blog" },
+            // { label: "Press", href: "/press" },
+            // { label: "Affiliates", href: "/affiliates" },
         ],
     }
 
@@ -181,11 +181,11 @@ export default function Footer() {
                     </div>
                     <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                         <HiOutlinePhone className="h-5 w-5" />
-                        <span>+1 (555) 123-4567</span>
+                        <span>+ (255) 717 275 661</span>
                     </div>
                     <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                         <HiOutlineLocationMarker className="h-5 w-5" />
-                        <span>123 Commerce St, City, Country</span>
+                        <span>Tandale,Dar es salaam, Tanzania</span>
                     </div>
                 </div>
 
@@ -196,8 +196,8 @@ export default function Footer() {
                         © {currentYear} Sci-Math Creation. All rights reserved.
                     </p>
 
-                    {/* Social Links */}
-                    <div className="mt-4 flex space-x-4 sm:mt-0">
+                    {/* Payment Icons */}
+                    <div className="mt-4 flex space-x-2 sm:mt-0">
                         {socialLinks.map((social) => (
                             <motion.a
                                 key={social.label}
@@ -211,19 +211,6 @@ export default function Footer() {
                             >
                                 <social.icon className="h-5 w-5" />
                             </motion.a>
-                        ))}
-                    </div>
-
-                    {/* Payment Icons */}
-                    <div className="mt-4 flex space-x-2 sm:mt-0">
-                        {paymentIcons.map((payment, index) => (
-                            <div
-                                key={index}
-                                className="rounded-lg bg-gray-100 p-2 dark:bg-gray-800"
-                                title={payment.label}
-                            >
-                                <payment.icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                            </div>
                         ))}
                     </div>
                 </div>

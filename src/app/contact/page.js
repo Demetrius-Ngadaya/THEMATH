@@ -16,8 +16,8 @@ export default function ContactPage() {
 
     const contactInfo = [
         { icon: HiOutlineMail, title: "Email", value: "support@Sci-Math Creation.com", link: "mailto:support@Sci-Math Creation.com" },
-        { icon: HiOutlinePhone, title: "Phone", value: "+1 (555) 123-4567", link: "tel:+15551234567" },
-        { icon: HiOutlineLocationMarker, title: "Address", value: "123 Commerce St, City, Country" },
+        { icon: HiOutlinePhone, title: "Phone", value: "+ (255) 717 275 661", link: "tel:+255 717 275 661 " },
+        { icon: HiOutlineLocationMarker, title: "Address", value: "Tandale,Dar es salaam, Tanzania" },
         { icon: HiOutlineClock, title: "Business Hours", value: "Mon-Fri: 9AM - 6PM" },
     ]
 
@@ -160,7 +160,7 @@ export default function ContactPage() {
                     <div className="relative h-96 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
                         {/* Replace with actual map component */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <p className="text-gray-500">Map Integration</p>
+                            <p className="text-gray-500">Google map</p>
                         </div>
                     </div>
                 </motion.div>

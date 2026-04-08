@@ -16,17 +16,17 @@ export default function Home() {
     // Simulate API call
     setTimeout(() => {
       setFeaturedProducts([
-        { id: 1, name: "Product 1", price: 99.99, image: "/product1.jpg", rating: 4.5 },
-        { id: 2, name: "Product 2", price: 149.99, image: "/product2.jpg", rating: 4.8 },
-        { id: 3, name: "Product 3", price: 79.99, image: "/product3.jpg", rating: 4.2 },
-        { id: 4, name: "Product 4", price: 199.99, image: "/product4.jpg", rating: 4.9 },
+        { id: 1, name: "Product 1", price: 42000, image: "/product1.jpg", rating: 4.5 },
+        { id: 2, name: "Product 2", price: 35000, image: "/product2.jpg", rating: 4.8 },
+        { id: 3, name: "Product 3", price: 29000, image: "/product3.jpg", rating: 4.2 },
+        { id: 4, name: "Product 4", price: 51000, image: "/product4.jpg", rating: 4.9 },
       ])
       setIsLoading(false)
     }, 1000)
   }, [])
 
   const features = [
-    { icon: HiOutlineTruck, title: "Free Shipping", description: "On orders over $50" },
+    { icon: HiOutlineTruck, title: "Delivery", description: "All regions in Tanzania" },
     { icon: HiOutlineShieldCheck, title: "Secure Payment", description: "100% secure transactions" },
     { icon: HiOutlineStar, title: "Premium Quality", description: "Best products guaranteed" },
     { icon: HiOutlineShoppingBag, title: "Easy Returns", description: "30-day return policy" },
@@ -47,9 +47,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="text-4xl font-bold tracking-tight text-white sm:text-3xl lg:text-3xl"
             >
-              Welcome to Your Ultimate Shopping Destination
+              Unique Apparel and Accessories Inspired by Science and the Mathematics
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export default function Home() {
               transition={{ delay: 0.3 }}
               className="mt-6 text-xl text-white/90"
             >
-              Discover amazing products at unbeatable prices. Shop now and experience the future of online shopping.
+              Leverage symbols,formulas, and elements from these disciplines to offer a distinctive bland of style,intellect and creativity.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -71,18 +71,12 @@ export default function Home() {
               >
                 Shop Now
               </Link>
-              <Link
-                href="/deals"
-                className="rounded-full bg-white/20 px-8 py-3 text-base font-semibold text-white backdrop-blur-sm hover:bg-white/30 transition-all hover:scale-105"
-              >
-                View Deals
-              </Link>
             </motion.div>
           </div>
         </motion.div>
 
         {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
@@ -104,7 +98,7 @@ export default function Home() {
               }}
             />
           ))}
-        </div>
+        </div> */}
       </section>
 
       {/* Features Section */}
@@ -146,7 +140,7 @@ export default function Home() {
       <section>
         <h2 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">Shop by Category</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {["Electronics", "Fashion", "Home", "Sports", "Books", "Toys"].map((category, index) => (
+          {["Clothes", "Shoes", "Watches", "Sports", "Cups", "Phone cases"].map((category, index) => (
             <motion.div
               key={category}
               initial={{ opacity: 0, scale: 0.9 }}

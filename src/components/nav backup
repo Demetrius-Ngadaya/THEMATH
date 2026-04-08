@@ -42,8 +42,6 @@ export default function Navbar() {
 
     const navLinks = [
         { href: "/", label: "Home" },
-        { href: "/services", label: "chaguo la kwanza" },
-        { href: "/services2", label: "chaguo la pili" },
         { href: "/products", label: "Products" },
         { href: "/deals", label: "Deals" },
         { href: "/about", label: "About" },

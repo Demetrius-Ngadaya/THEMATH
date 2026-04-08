@@ -13,10 +13,10 @@ export default function AboutPage() {
     ]
 
     const team = [
-        { name: "John Doe", role: "CEO & Founder", image: "/team1.jpg" },
-        { name: "Jane Smith", role: "Head of Operations", image: "/team2.jpg" },
-        { name: "Mike Johnson", role: "Technical Lead", image: "/team3.jpg" },
-        { name: "Sarah Williams", role: "Customer Experience", image: "/team4.jpg" },
+        { name: "Mrisho", role: "CEO & Founder", image: "/team1.jpg" },
+        { name: "Mrisho", role: "CEO", image: "/team2.jpg" },
+        { name: "Mrisho", role: "CEO", image: "/team3.jpg" },
+        { name: "Mrisho", role: "CEO", image: "/team4.jpg" },
     ]
 
     return (
@@ -30,7 +30,7 @@ export default function AboutPage() {
                 >
                     <h1 className="text-4xl font-bold text-white mb-4">About Sci-Math Creation</h1>
                     <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                        Your premier destination for quality products and exceptional shopping experience.
+                        Data analysis,Reseacher.......... destination for quality products and exceptional shopping experience.
                     </p>
                 </motion.div>
             </section>
@@ -44,8 +44,8 @@ export default function AboutPage() {
                 >
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Our Story</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                        Founded in 2025, Sci-Math Creation began with a simple mission: to make quality products accessible to everyone.
-                        What started as a small online store has grown into a trusted marketplace serving millions of customers worldwide.
+                        Founded in 2024, Sci-Math Creation began with a simple mission: to make quality products accessible to everyone.
+                        What started as a small offline store has grown into a trusted marketplace serving customers within the Tanzania.
                     </p>
                     <p className="text-gray-600 dark:text-gray-400">
                         We believe in providing not just products, but experiences. Every item in our collection is carefully
@@ -94,8 +94,8 @@ export default function AboutPage() {
                 >
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Mission</h3>
                     <p className="text-gray-600 dark:text-gray-400">
-                        To revolutionize online shopping by providing a seamless, secure, and enjoyable experience
-                        for customers worldwide while supporting local businesses and sustainable practices.
+                        Founded in 2024, Sci-Math Creation began with a simple mission: to make quality products accessible to everyone.
+                        What started as a small offline store has grown into a trusted marketplace serving customers within the Tanzania.
                     </p>
                 </motion.div>
                 <motion.div

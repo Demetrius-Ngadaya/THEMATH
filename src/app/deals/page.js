@@ -14,19 +14,19 @@ export default function DealsPage() {
         // Simulate API call
         setTimeout(() => {
             setDeals([
-                { id: 1, name: "Product 1", price: 49.99, originalPrice: 99.99, discount: 50, image: "/product1.jpg", rating: 4.5 },
-                { id: 2, name: "Product 2", price: 79.99, originalPrice: 159.99, discount: 50, image: "/product2.jpg", rating: 4.8 },
-                { id: 3, name: "Product 3", price: 39.99, originalPrice: 79.99, discount: 50, image: "/product3.jpg", rating: 4.2 },
-                { id: 4, name: "Product 4", price: 99.99, originalPrice: 199.99, discount: 50, image: "/product4.jpg", rating: 4.9 },
+                { id: 1, name: "Product 1", price: 42000, originalPrice: 50000, discount: 50, image: "/product1.jpg", rating: 4.5 },
+                { id: 2, name: "Product 2", price: 45000, originalPrice: 55000, discount: 50, image: "/product2.jpg", rating: 4.8 },
+                { id: 3, name: "Product 3", price: 24000, originalPrice: 30000, discount: 50, image: "/product3.jpg", rating: 4.2 },
+                { id: 4, name: "Product 4", price: 31000, originalPrice: 37000, discount: 50, image: "/product4.jpg", rating: 4.9 },
             ])
             setIsLoading(false)
         }, 1000)
     }, [])
 
     const flashDeals = [
-        { id: 1, name: "Flash Deal 1", price: 29.99, originalPrice: 89.99, discount: 66, endsIn: 3600 },
-        { id: 2, name: "Flash Deal 2", price: 49.99, originalPrice: 149.99, discount: 67, endsIn: 7200 },
-        { id: 3, name: "Flash Deal 3", price: 19.99, originalPrice: 59.99, discount: 67, endsIn: 10800 },
+        { id: 1, name: "Flash Deal 1", price: 33000, originalPrice: 40000, discount: 66, endsIn: 3600 },
+        { id: 2, name: "Flash Deal 2", price: 41000, originalPrice: 45000, discount: 67, endsIn: 7200 },
+        { id: 3, name: "Flash Deal 3", price: 20000, originalPrice: 25000, discount: 67, endsIn: 10800 },
     ]
 
     return (
@@ -79,8 +79,8 @@ export default function DealsPage() {
                                 <div className="aspect-square bg-gray-200 dark:bg-gray-800 rounded-xl mb-4" />
                                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{deal.name}</h3>
                                 <div className="flex items-center gap-2 mb-4">
-                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">${deal.price}</span>
-                                    <span className="text-sm text-gray-500 line-through">${deal.originalPrice}</span>
+                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">TSh {deal.price.toLocaleString()}</span>
+                                    <span className="text-sm text-gray-500 line-through">TSh {deal.originalPrice.toLocaleString()}</span>
                                 </div>
                                 <CountdownTimer initialSeconds={deal.endsIn} />
                             </div>

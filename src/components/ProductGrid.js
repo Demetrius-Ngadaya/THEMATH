@@ -56,11 +56,11 @@ export default function ProductGrid({ products, isLoading }) {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                                ${product.price}
+                                TSh {product.price.toLocaleString()}
                             </span>
                             {product.originalPrice && (
                                 <span className="text-sm text-gray-500 line-through">
-                                    ${product.originalPrice}
+                                    TSh {product.originalPrice.toLocaleString()}
                                 </span>
                             )}
                         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { API } from "@/services/api"
 import ProductGrid from "@/components/ProductGrid"
-import Filters from "@/components/Filters"
+// import Filters from "@/components/Filters"
 
 export default function Products() {
 
@@ -16,9 +16,9 @@ export default function Products() {
             .catch(() => {
 
                 setProducts([
-                    { id: 1, name: "Laptop", price: 800, image: "/laptop.jpg" },
-                    { id: 2, name: "Phone", price: 400, image: "/phone.jpg" },
-                    { id: 3, name: "Headphones", price: 100, image: "/headphones.jpg" },
+                    { id: 1, name: "CLothes", price: 50000, image: "/laptop.jpg" },
+                    { id: 2, name: "Phone case", price: 20000, image: "/phone.jpg" },
+                    { id: 3, name: "Watches", price: 25000, image: "/headphones.jpg" },
                 ])
 
             })
@@ -29,11 +29,11 @@ export default function Products() {
 
         <div className="grid grid-cols-5 gap-6 py-10">
 
-            <div>
+            {/* <div>
 
                 <Filters />
 
-            </div>
+            </div> */}
 
             <div className="col-span-4">
 
