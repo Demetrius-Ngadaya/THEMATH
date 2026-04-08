@@ -11,7 +11,7 @@ import {
     HiOutlineShoppingCart,
     HiOutlineHeart,
     HiOutlineUser,
-    // HiOutlineSearch,
+    HiOutlineSearch,
     HiOutlineSun,
     HiOutlineMoon,
     HiMenu,
@@ -19,12 +19,12 @@ import {
     HiOutlineChevronDown
 } from "react-icons/hi"
 import MegaMenu from "./MegaMenu"
-// import SearchBar from "./SearchBar"
+import SearchBar from "./SearchBar"
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
-    // const [showSearch, setShowSearch] = useState(false)
+    const [showSearch, setShowSearch] = useState(false)
     const { theme, setTheme } = useTheme()
     const pathname = usePathname()
 
@@ -42,6 +42,8 @@ export default function Navbar() {
 
     const navLinks = [
         { href: "/", label: "Home" },
+        { href: "/services", label: "chaguo la kwanza" },
+        { href: "/services2", label: "chaguo la pili" },
         { href: "/products", label: "Products" },
         { href: "/deals", label: "Deals" },
         { href: "/about", label: "About" },
@@ -114,12 +116,12 @@ export default function Navbar() {
                         {/* Right Icons */}
                         <div className="flex items-center space-x-4">
                             {/* Search Toggle */}
-                            {/* <button
+                            <button
                                 onClick={() => setShowSearch(!showSearch)}
                                 className="rounded-full p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
                             >
                                 <HiOutlineSearch className="h-5 w-5" />
-                            </button> */}
+                            </button>
 
                             {/* Theme Toggle */}
                             <button
