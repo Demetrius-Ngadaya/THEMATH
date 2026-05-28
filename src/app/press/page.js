@@ -206,7 +206,7 @@ export default function PressPage() {
                 </p>
                 <div className="space-y-2 text-white/80">
                     <p>press@Sci-Math Creation.com</p>
-                    <p>+1 (555) 123-4567</p>
+                    <p>+255 717 275 661</p>
                 </div>
             </section>
         </div>

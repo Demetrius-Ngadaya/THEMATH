@@ -1,12 +1,11 @@
+// app/layout.js
 "use client"
 
-import { Provider } from "react-redux"
-import { store } from "@/store/store"
-import { ThemeProvider } from "next-themes"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
+import { Providers } from './providers'
+import { NextUIProviders } from '@/providers/NextUIProvider'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import { Inter } from "next/font/google"
 import "./globals.css"
 
@@ -15,35 +14,35 @@ const inter = Inter({ subsets: ["latin"] })
 export default function RootLayout({ children }) {
   const pathname = usePathname()
 
+  // Check if current route is admin or auth pages (login/register)
+  const isAdminRoute = pathname?.startsWith('/admin')
+  const isAuthRoute = pathname === '/login' || pathname === '/register'
+
+  // For admin routes and auth routes, don't show Navbar/Footer
+  const shouldShowLayout = !isAdminRoute && !isAuthRoute
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-      </head>
-      <body className={`${inter.className} bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-black transition-colors duration-300`}>
-        <Provider store={store}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <AnimatePresence mode="wait">
-                <motion.main
-                  key={pathname}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="flex-grow pt-20"
-                >
+      <body className={inter.className}>
+        <NextUIProviders>
+          <Providers>
+            {shouldShowLayout ? (
+              // Frontend routes - With Navbar/Footer and container
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow pt-20">
                   <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                     {children}
                   </div>
-                </motion.main>
-              </AnimatePresence>
-              <Footer />
-            </div>
-          </ThemeProvider>
-        </Provider>
+                </main>
+                <Footer />
+              </div>
+            ) : (
+              // Admin and Auth routes - No Navbar/Footer, full width
+              <>{children}</>
+            )}
+          </Providers>
+        </NextUIProviders>
       </body>
     </html>
   )
