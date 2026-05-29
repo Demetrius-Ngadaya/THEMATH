@@ -133,7 +133,7 @@ function ProductsContentInner() {
                                             placeholder="Search by name..."
                                             value={searchInput}
                                             onChange={(e) => setSearchInput(e.target.value)}
-                                            onKeyPress={handleKeyPress}
+                                            onKeyDown={handleKeyPress}
                                             startContent={<FiSearch className="text-gray-400" />}
                                             endContent={searchInput && (
                                                 <button onClick={() => setSearchInput("")} className="focus:outline-none" type="button">
@@ -192,7 +192,7 @@ function ProductsContentInner() {
                                             placeholder="Search by name..."
                                             value={searchInput}
                                             onChange={(e) => setSearchInput(e.target.value)}
-                                            onKeyPress={handleKeyPress}
+                                            onKeyDown={handleKeyPress}
                                             startContent={<FiSearch className="text-gray-400" />}
                                         />
                                     </div>
