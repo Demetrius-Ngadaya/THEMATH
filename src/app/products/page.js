@@ -1,6 +1,7 @@
 // app/products/page.js
 "use client"
 
+import { Suspense } from "react"
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { PublicAPI } from "@/services/publicApi"
@@ -9,7 +10,8 @@ import { motion } from "framer-motion"
 import { Input, Select, SelectItem, Button, Card, CardBody, Spinner, Chip } from "@nextui-org/react"
 import { FiSearch, FiX, FiFilter } from "react-icons/fi"
 
-export default function Products() {
+// Create a separate component that uses useSearchParams
+function ProductsContent() {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [categories, setCategories] = useState([])
@@ -184,7 +186,7 @@ export default function Products() {
                                             startContent={<FiSearch />}
                                             onPress={handleSearch}
                                         >
-                                            Search 
+                                            Search
                                         </Button>
                                         {(searchInput || selectedCategory) && (
                                             <Button
@@ -435,5 +437,18 @@ export default function Products() {
                 </div>
             </div>
         </div>
+    )
+}
+
+// Main page component with Suspense boundary
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex justify-center items-center h-96">
+                <Spinner size="lg" color="primary" />
+            </div>
+        }>
+            <ProductsContent />
+        </Suspense>
     )
 }
