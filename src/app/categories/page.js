@@ -97,7 +97,7 @@ export default function CategoriesPage() {
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null
         if (imagePath.startsWith('http')) return imagePath
-        return `${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/storage/${imagePath}`
+        return `${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/storage/${imagePath}`
     }
 
     const filteredCategories = categories.filter(category =>

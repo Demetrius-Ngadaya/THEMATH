@@ -116,7 +116,7 @@ export default function AdminOrders() {
             if (dateFrom) params.date_from = dateFrom
             if (dateTo) params.date_to = dateTo
 
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/orders`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/orders`, {
                 params: params,
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -153,7 +153,7 @@ export default function AdminOrders() {
             setUpdatingStatus(orderId)
             try {
                 const token = Cookies.get('admin_token')
-                await axios.put(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/orders/${orderId}/status`,
+                await axios.put(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/orders/${orderId}/status`,
                     { status: newStatus },
                     {
                         headers: {
@@ -177,7 +177,7 @@ export default function AdminOrders() {
     const viewOrderDetails = async (orderId) => {
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/orders/${orderId}`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/orders/${orderId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json'
