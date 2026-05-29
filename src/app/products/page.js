@@ -1,19 +1,22 @@
+// app/products/page.js
 "use client"
 
-import { Suspense, lazy } from "react"
+import dynamic from 'next/dynamic'
 import { Spinner } from "@nextui-org/react"
 
-// Lazy load the products component to disable SSR for the part that uses useSearchParams
-const ProductsContent = lazy(() => import('./ProductsContent'))
-
-export default function ProductsPage() {
-    return (
-        <Suspense fallback={
+// Dynamically import the products component with SSR disabled
+const ProductsContent = dynamic(
+    () => import('./ProductsContent'),
+    {
+        ssr: false,
+        loading: () => (
             <div className="flex justify-center items-center h-96">
                 <Spinner size="lg" color="primary" />
             </div>
-        }>
-            <ProductsContent />
-        </Suspense>
-    )
+        )
+    }
+)
+
+export default function ProductsPage() {
+    return <ProductsContent />
 }
