@@ -1,7 +1,7 @@
 // app/products/ProductsContent.js
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { PublicAPI } from "@/services/publicApi"
 import ProductGrid from "@/components/ProductGrid"
@@ -9,7 +9,8 @@ import { motion } from "framer-motion"
 import { Input, Select, SelectItem, Button, Card, CardBody, Spinner, Chip } from "@nextui-org/react"
 import { FiSearch, FiX, FiFilter } from "react-icons/fi"
 
-export default function ProductsContent() {
+// Inner component that uses useSearchParams
+function ProductsContentInner() {
     const [products, setProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [categories, setCategories] = useState([])
@@ -21,7 +22,6 @@ export default function ProductsContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
 
-    // Get initial values from URL
     const searchQuery = searchParams.get('search') || ""
     const categoryId = searchParams.get('category_id') || ""
 
@@ -127,7 +127,6 @@ export default function ProductsContent() {
                                         <FiFilter className="h-5 w-5" />
                                         Filters
                                     </h3>
-
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
                                         <Input
@@ -144,7 +143,6 @@ export default function ProductsContent() {
                                             className="w-full"
                                         />
                                     </div>
-
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                                         <Select
@@ -160,7 +158,6 @@ export default function ProductsContent() {
                                             ))}
                                         </Select>
                                     </div>
-
                                     <div className="space-y-2">
                                         <Button color="primary" className="w-full" startContent={<FiSearch />} onPress={handleSearch}>
                                             Search
@@ -185,12 +182,7 @@ export default function ProductsContent() {
 
                     {/* Mobile Filters */}
                     {showFilters && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="lg:hidden mb-6"
-                        >
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="lg:hidden mb-6">
                             <Card>
                                 <CardBody className="p-6">
                                     <h3 className="font-semibold text-lg mb-4">Filters</h3>
@@ -329,5 +321,14 @@ export default function ProductsContent() {
                 </div>
             </div>
         </div>
+    )
+}
+
+// Main export with Suspense boundary for the hook
+export default function ProductsContent() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Spinner size="lg" color="primary" /></div>}>
+            <ProductsContentInner />
+        </Suspense>
     )
 }
