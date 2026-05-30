@@ -33,6 +33,7 @@ export default function Login() {
 
             dispatch(setUser(user))
 
+            // Check for intended product or redirect URL
             const intendedProduct = localStorage.getItem('intendedProduct')
             const redirectUrl = localStorage.getItem('redirectAfterLogin')
 
@@ -52,10 +53,11 @@ export default function Login() {
                         price: product.price,
                         quantity: 1
                     }))
+                    router.push('/cart')
                 } catch (error) {
                     console.error("Error adding intended product:", error)
+                    router.push('/cart')
                 }
-                router.push('/cart')
             } else if (redirectUrl) {
                 localStorage.removeItem('redirectAfterLogin')
                 router.push(redirectUrl)
@@ -80,7 +82,6 @@ export default function Login() {
             >
                 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                     <div className="p-8">
-                        {/* Logo and Title */}
                         <div className="text-center mb-8">
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -96,7 +97,6 @@ export default function Login() {
                             <p className="text-gray-500 mt-2">Sign in to your account</p>
                         </div>
 
-                        {/* Error Alert */}
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
@@ -108,7 +108,6 @@ export default function Login() {
                             </motion.div>
                         )}
 
-                        {/* Login Form */}
                         <form className="space-y-5" onSubmit={handleSubmit(submit)}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -178,7 +177,6 @@ export default function Login() {
                             </button>
                         </form>
 
-                        {/* Register Link */}
                         <div className="mt-6 text-center">
                             <p className="text-sm text-gray-600">
                                 Don't have an account?{" "}
@@ -187,7 +185,6 @@ export default function Login() {
                                 </Link>
                             </p>
                         </div>
-               
                     </div>
                 </div>
             </motion.div>

@@ -85,11 +85,21 @@ function ProductsContentInner() {
         }
     }
 
+
+
+    // Inside ProductsContentInner component, replace the handler functions:
+
     const handleAddToCart = async (product) => {
         const token = Cookies.get('auth_token')
 
         if (!token) {
-            localStorage.setItem('intendedProduct', JSON.stringify({ id: product.id, quantity: 1 }))
+            // Store complete product details for after login
+            localStorage.setItem('intendedProduct', JSON.stringify({
+                id: product.id,
+                quantity: 1,
+                name: product.name,
+                price: product.price
+            }))
             localStorage.setItem('redirectAfterLogin', '/cart')
             showError('Please Login', 'You need to login first to add items to cart')
             router.push('/login')
@@ -115,7 +125,13 @@ function ProductsContentInner() {
         const token = Cookies.get('auth_token')
 
         if (!token) {
-            localStorage.setItem('intendedProduct', JSON.stringify({ id: product.id, quantity: 1 }))
+            // Store complete product details for after login
+            localStorage.setItem('intendedProduct', JSON.stringify({
+                id: product.id,
+                quantity: 1,
+                name: product.name,
+                price: product.price
+            }))
             localStorage.setItem('redirectAfterLogin', '/cart')
             showError('Please Login', 'You need to login first to add items to cart')
             router.push('/login')
@@ -129,7 +145,7 @@ function ProductsContentInner() {
                 quantity: 1
             })
             showSuccess('Added to Cart', `${product.name} has been added to your cart`)
-            router.push('/cart') // Navigate to cart page
+            router.push('/cart')
         } catch (error) {
             console.error("Error adding to cart:", error)
             showError('Error', error.response?.data?.message || 'Failed to add to cart')

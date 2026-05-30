@@ -45,6 +45,7 @@ export default function Register() {
 
             dispatch(setUser(user))
 
+            // Check for intended product or redirect URL
             const intendedProduct = localStorage.getItem('intendedProduct')
             const redirectUrl = localStorage.getItem('redirectAfterLogin')
 
@@ -64,10 +65,11 @@ export default function Register() {
                         price: product.price,
                         quantity: 1
                     }))
+                    router.push('/cart')
                 } catch (error) {
                     console.error("Error adding intended product:", error)
+                    router.push('/cart')
                 }
-                router.push('/cart')
             } else if (redirectUrl) {
                 localStorage.removeItem('redirectAfterLogin')
                 router.push(redirectUrl)
@@ -111,7 +113,6 @@ export default function Register() {
             >
                 <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
                     <div className="p-8">
-                        {/* Logo and Title */}
                         <div className="text-center mb-8">
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -121,11 +122,10 @@ export default function Register() {
                             >
                                 <FiUserPlus className="w-10 h-10 text-white" />
                             </motion.div>
-                            {/* <h2 className="text-3xl font-bold text-gray-800">Create Account</h2> */}
-                            <p className="text-gray-500 mt-2">Create account if you don't have</p>
+                            <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
+                            <p className="text-gray-500 mt-2">Join our community today</p>
                         </div>
 
-                        {/* Error Alert */}
                         {error && (
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
@@ -146,7 +146,6 @@ export default function Register() {
                             </motion.div>
                         )}
 
-                        {/* Registration Form */}
                         <form className="space-y-4" onSubmit={handleSubmit(submit)}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -160,7 +159,7 @@ export default function Register() {
                                         type="text"
                                         {...register("name", { required: "Name is required" })}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                        placeholder="Demetrius Ngadaya"
+                                        placeholder="John Doe"
                                     />
                                 </div>
                                 {errors.name && (
@@ -196,7 +195,7 @@ export default function Register() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Phone Number <span className="text-gray-400 text-xs"></span>
+                                    Phone Number <span className="text-gray-400 text-xs">(Optional)</span>
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -206,7 +205,7 @@ export default function Register() {
                                         type="tel"
                                         {...register("phone_number")}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                        placeholder="+255714393840"
+                                        placeholder="+1234567890"
                                     />
                                 </div>
                             </div>
@@ -282,7 +281,6 @@ export default function Register() {
                             </button>
                         </form>
 
-                        {/* Login Link */}
                         <div className="mt-6 text-center">
                             <p className="text-sm text-gray-600">
                                 Already have an account?{" "}
