@@ -376,7 +376,7 @@ export default function ServicesPage() {
                                 Email Us
                             </motion.a>
                             <motion.a
-                                href="tel:+255123456789"
+                                href="tel:+255712345678"
                                 whileHover={{ scale: 1.05 }}
                                 className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-all"
                             >

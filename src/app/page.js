@@ -1,14 +1,19 @@
+// app/page.js
 "use client"
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { HiOutlineShoppingBag, HiOutlineStar, HiOutlineTruck, HiOutlineShieldCheck } from "react-icons/hi"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import ProductGrid from "@/components/ProductGrid"
 import { PublicAPI } from "@/services/publicApi"
+import { API } from "@/services/api"
 import { getImageUrl } from "@/utils/imageHelper"
+import { showSuccess, showError } from "@/utils/sweetalert"
+import Cookies from "js-cookie"
 import axios from "axios"
 
 export default function Home() {
@@ -17,9 +22,11 @@ export default function Home() {
   const [heroSliders, setHeroSliders] = useState([])
   const [teamMembers, setTeamMembers] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [addingToCart, setAddingToCart] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [nextSlide, setNextSlide] = useState(1)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const router = useRouter()
 
   const features = [
     { icon: HiOutlineTruck, title: "Delivery", description: "All regions in Tanzania" },
@@ -27,6 +34,73 @@ export default function Home() {
     { icon: HiOutlineStar, title: "Premium Quality", description: "Best products and services guaranteed" },
     { icon: HiOutlineShoppingBag, title: "Easy Returns", description: "30-day return policy" },
   ]
+
+  // Handle product click - add to cart and redirect to cart
+  const handleProductClick = async (product) => {
+    const token = Cookies.get('auth_token')
+
+    if (!token) {
+      localStorage.setItem('intendedProduct', JSON.stringify({
+        id: product.id,
+        quantity: 1,
+        name: product.name,
+        price: product.price
+      }))
+      localStorage.setItem('redirectAfterLogin', '/cart')
+      showError('Please Login', 'You need to login first to add items to cart')
+      router.push('/login')
+      return
+    }
+
+    setAddingToCart(product.id)
+    try {
+      await API.addToCart({
+        product_id: product.id,
+        quantity: 1
+      })
+      showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+      router.push('/cart')
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+      showError('Error', error.response?.data?.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(null)
+    }
+  }
+
+  // Handle add to cart button click (stops propagation)
+  const handleAddToCartClick = async (e, product) => {
+    e.stopPropagation()
+    const token = Cookies.get('auth_token')
+
+    if (!token) {
+      localStorage.setItem('intendedProduct', JSON.stringify({
+        id: product.id,
+        quantity: 1,
+        name: product.name,
+        price: product.price
+      }))
+      localStorage.setItem('redirectAfterLogin', '/cart')
+      showError('Please Login', 'You need to login first to add items to cart')
+      router.push('/login')
+      return
+    }
+
+    setAddingToCart(product.id)
+    try {
+      await API.addToCart({
+        product_id: product.id,
+        quantity: 1
+      })
+      showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+      router.push('/cart')
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+      showError('Error', error.response?.data?.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(null)
+    }
+  }
 
   // Fetch all dynamic data
   useEffect(() => {
@@ -63,7 +137,6 @@ export default function Home() {
 
       } catch (error) {
         console.error("Error fetching data:", error)
-        // Set fallback data
         setHeroSliders([])
         setTeamMembers([])
       } finally {
@@ -189,9 +262,6 @@ export default function Home() {
                   className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12 z-10"
                 >
                   <div className="mx-auto max-w-4xl text-center">
-                    {/* <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl drop-shadow-lg">
-                      {heroSliders[currentSlide]?.title}
-                    </h1> */}
                     <p className="mt-2 text-base text-white/90 sm:text-lg lg:text-xl drop-shadow">
                       {heroSliders[currentSlide]?.subtitle}
                     </p>
@@ -230,8 +300,8 @@ export default function Home() {
                       onClick={() => goToSlide(index)}
                       disabled={isTransitioning}
                       className={`h-2 rounded-full transition-all duration-300 ${currentSlide === index
-                          ? "w-8 bg-white sm:w-10"
-                          : "w-2 bg-white/50 hover:bg-white/80"
+                        ? "w-8 bg-white sm:w-10"
+                        : "w-2 bg-white/50 hover:bg-white/80"
                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                     />
                   ))}
@@ -262,7 +332,7 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products - Custom Grid with Click Handlers */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Featured Products</h2>
@@ -271,7 +341,90 @@ export default function Home() {
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>
-        <ProductGrid products={featuredProducts} isLoading={isLoading} />
+
+        {/* Custom Product Grid with click handlers */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-gray-200 rounded-2xl h-64 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : featuredProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No products found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {featuredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className={`group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all cursor-pointer ${addingToCart === product.id ? 'opacity-50 pointer-events-none' : ''
+                  }`}
+                onClick={() => handleProductClick(product)}
+              >
+                {/* Loading Overlay */}
+                {addingToCart === product.id && (
+                  <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center rounded-2xl">
+                    <div className="bg-white rounded-lg p-4 flex flex-col items-center gap-2">
+                      <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span className="text-sm font-semibold">Adding to Cart...</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  {product.images?.[0] ? (
+                    <img
+                      src={getImageUrl(product.images[0].path)}
+                      alt={product.name}
+                      className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.src = '/placeholder.jpg'
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {product.name}
+                  </h3>
+
+                  {/* Price */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl font-bold text-red-600 dark:text-red-400">
+                      TSh {product.price?.toLocaleString()}
+                    </span>
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={(e) => handleAddToCartClick(e, product)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    disabled={addingToCart === product.id}
+                  >
+                    <HiOutlineShoppingBag className="h-5 w-5" />
+                    Add to Cart
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Categories Grid */}
@@ -387,8 +540,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-      {/* Newsletter Section */}
-      </div>
+    </div>
   )
 }

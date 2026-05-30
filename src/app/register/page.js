@@ -159,7 +159,7 @@ export default function Register() {
                                         type="text"
                                         {...register("name", { required: "Name is required" })}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                        placeholder="John Doe"
+                                        placeholder="Hamis Mrisho "
                                     />
                                 </div>
                                 {errors.name && (
@@ -195,7 +195,7 @@ export default function Register() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Phone Number <span className="text-gray-400 text-xs">(Optional)</span>
+                                    Phone Number <span className="text-gray-400 text-xs"></span>
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -205,7 +205,7 @@ export default function Register() {
                                         type="tel"
                                         {...register("phone_number")}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                        placeholder="+1234567890"
+                                        placeholder="+225712345678"
                                     />
                                 </div>
                             </div>

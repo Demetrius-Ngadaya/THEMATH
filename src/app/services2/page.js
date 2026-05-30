@@ -536,11 +536,11 @@ export default function ServicesPage() {
                             </motion.a>
                             <motion.a
                                 whileHover={{ scale: 1.05 }}
-                                href="tel:+255123456789"
+                                href="tel:+255717275661"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all"
                             >
                                 <HiOutlinePhone className="h-5 w-5" />
-                                +255 123 456 789
+                                +255 717 275 661
                             </motion.a>
                         </div>
                     </motion.div>
