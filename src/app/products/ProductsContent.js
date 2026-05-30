@@ -4,10 +4,13 @@
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { PublicAPI } from "@/services/publicApi"
+import { API } from "@/services/api"
 import ProductGrid from "@/components/ProductGrid"
 import { motion } from "framer-motion"
 import { Input, Select, SelectItem, Button, Card, CardBody, Spinner, Chip } from "@nextui-org/react"
 import { FiSearch, FiX, FiFilter } from "react-icons/fi"
+import { showSuccess, showError } from "@/utils/sweetalert"
+import Cookies from "js-cookie"
 
 // Inner component that uses useSearchParams
 function ProductsContentInner() {
@@ -18,6 +21,7 @@ function ProductsContentInner() {
     const [searchInput, setSearchInput] = useState("")
     const [selectedCategory, setSelectedCategory] = useState("")
     const [showFilters, setShowFilters] = useState(false)
+    const [addingToCart, setAddingToCart] = useState(null)
 
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -78,6 +82,58 @@ function ProductsContentInner() {
             setProducts([])
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleAddToCart = async (product) => {
+        const token = Cookies.get('auth_token')
+
+        if (!token) {
+            localStorage.setItem('intendedProduct', JSON.stringify({ id: product.id, quantity: 1 }))
+            localStorage.setItem('redirectAfterLogin', '/cart')
+            showError('Please Login', 'You need to login first to add items to cart')
+            router.push('/login')
+            return
+        }
+
+        setAddingToCart(product.id)
+        try {
+            await API.addToCart({
+                product_id: product.id,
+                quantity: 1
+            })
+            showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+        } catch (error) {
+            console.error("Error adding to cart:", error)
+            showError('Error', error.response?.data?.message || 'Failed to add to cart')
+        } finally {
+            setAddingToCart(null)
+        }
+    }
+
+    const handleProductClick = async (product) => {
+        const token = Cookies.get('auth_token')
+
+        if (!token) {
+            localStorage.setItem('intendedProduct', JSON.stringify({ id: product.id, quantity: 1 }))
+            localStorage.setItem('redirectAfterLogin', '/cart')
+            showError('Please Login', 'You need to login first to add items to cart')
+            router.push('/login')
+            return
+        }
+
+        setAddingToCart(product.id)
+        try {
+            await API.addToCart({
+                product_id: product.id,
+                quantity: 1
+            })
+            showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+            router.push('/cart') // Navigate to cart page
+        } catch (error) {
+            console.error("Error adding to cart:", error)
+            showError('Error', error.response?.data?.message || 'Failed to add to cart')
+            setAddingToCart(null)
         }
     }
 
@@ -274,7 +330,13 @@ function ProductsContentInner() {
                                 )}
                             </motion.div>
                         ) : (
-                            <ProductGrid products={products} isLoading={isLoading} />
+                            <ProductGrid
+                                products={products}
+                                isLoading={isLoading}
+                                onAddToCart={handleAddToCart}
+                                onProductClick={handleProductClick}
+                                addingToCart={addingToCart}
+                            />
                         )}
 
                         {pagination && pagination.last_page > 1 && (

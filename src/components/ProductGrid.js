@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { HiOutlineStar, HiOutlineShoppingCart } from "react-icons/hi"
 import { getImageUrl } from "@/utils/imageHelper"
 
-export default function ProductGrid({ products, isLoading, onProductClick, addingToCart }) {
+export default function ProductGrid({ products, isLoading, onAddToCart, onProductClick, addingToCart }) {
     if (isLoading) {
         return (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -28,6 +28,19 @@ export default function ProductGrid({ products, isLoading, onProductClick, addin
         )
     }
 
+    const handleCardClick = (product) => {
+        if (onProductClick) {
+            onProductClick(product)
+        }
+    }
+
+    const handleAddToCartClick = (e, product) => {
+        e.stopPropagation() // Prevent triggering the card click
+        if (onAddToCart) {
+            onAddToCart(product)
+        }
+    }
+
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products.map((product, index) => (
@@ -38,7 +51,7 @@ export default function ProductGrid({ products, isLoading, onProductClick, addin
                     transition={{ delay: index * 0.05 }}
                     className={`group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all cursor-pointer ${addingToCart === product.id ? 'opacity-50 pointer-events-none' : ''
                         }`}
-                    onClick={() => onProductClick && onProductClick(product)}
+                    onClick={() => handleCardClick(product)}
                 >
                     {/* Loading Overlay */}
                     {addingToCart === product.id && (
@@ -109,10 +122,15 @@ export default function ProductGrid({ products, isLoading, onProductClick, addin
                             )}
                         </div>
 
-                        {/* Add to Cart Hint */}
-                        <div className="mt-2 text-center text-sm text-blue-600 dark:text-blue-400 font-semibold">
-                            Click to add to cart →
-                        </div>
+                        {/* Add to Cart Button */}
+                        <button
+                            onClick={(e) => handleAddToCartClick(e, product)}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                            disabled={addingToCart === product.id}
+                        >
+                            <HiOutlineShoppingCart className="h-5 w-5" />
+                            Add to Cart
+                        </button>
                     </div>
                 </motion.div>
             ))}

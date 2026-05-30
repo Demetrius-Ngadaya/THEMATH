@@ -11,7 +11,7 @@ const api = axios.create({
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
     },
-    withCredentials: true,
+    // withCredentials: true,
 });
 
 // Add token to requests if available
@@ -61,7 +61,7 @@ export const API = {
 
     // Auth
     register: async (data) => {
-        await fetchCsrfCookie();
+        // await fetchCsrfCookie();
         return api.post('/register', data);
     },
     login: async (data) => {
