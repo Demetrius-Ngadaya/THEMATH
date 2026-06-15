@@ -125,7 +125,7 @@ export default function AdminOrders() {
             })
 
             console.log('Orders response:', response.data)
-            
+
             setOrders(response.data.data || [])
             setTotalPages(response.data.last_page || 1)
             setTotalItems(response.data.total || 0)
@@ -195,16 +195,16 @@ export default function AdminOrders() {
     // Helper function to get product names from order items
     const getProductNames = (items) => {
         if (!items || items.length === 0) return 'No products'
-        
+
         // Try different possible property names for product name
         const names = items.map(item => {
-            return item.product_name || 
-                   item.name || 
-                   item.product?.name || 
-                   item.title || 
-                   `Product #${item.product_id || item.id}`
+            return item.product_name ||
+                item.name ||
+                item.product?.name ||
+                item.title ||
+                `Product #${item.product_id || item.id}`
         })
-        
+
         return names.join(', ')
     }
 
@@ -338,13 +338,14 @@ export default function AdminOrders() {
         cancelled: FiXCircle
     }
 
-    if (isLoading && orders.length === 0) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Loading spinner removed for faster page load
+    // if (isLoading && orders.length === 0) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     if (error && orders.length === 0) {
         return (

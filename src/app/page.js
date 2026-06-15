@@ -201,6 +201,7 @@ export default function Home() {
     }, 1000)
   }
 
+  // COMMENTED OUT - Loading spinner removed for faster page load
   // if (isLoading) {
   //   return (
   //     <div className="flex justify-center items-center h-96">
@@ -343,7 +344,8 @@ export default function Home() {
         </div>
 
         {/* Custom Product Grid with click handlers */}
-        {isLoading ? (
+        {/* COMMENTED OUT - Loading skeleton removed, showing content immediately */}
+        {/* {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="animate-pulse">
@@ -354,6 +356,11 @@ export default function Home() {
             ))}
           </div>
         ) : featuredProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No products found</p>
+          </div>
+        ) : ( */}
+        {featuredProducts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No products found</p>
           </div>
