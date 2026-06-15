@@ -185,7 +185,7 @@ export default function Footer() {
                     </div>
                     <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                         <HiOutlineLocationMarker className="h-5 w-5" />
-                        <span>Tandale,Dar es salaam, Tanzania</span>
+                        <span>Dar es salaam, Tanzania</span>
                     </div>
                 </div>
 

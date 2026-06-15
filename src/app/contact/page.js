@@ -17,7 +17,7 @@ export default function ContactPage() {
     const contactInfo = [
         { icon: HiOutlineMail, title: "Email", value: "support@Sci-Math Creation.com", link: "mailto:support@Sci-Math Creation.com" },
         { icon: HiOutlinePhone, title: "Phone", value: "+ (255) 717 275 661", link: "tel:+255 717 275 661 " },
-        { icon: HiOutlineLocationMarker, title: "Address", value: "Tandale,Dar es salaam, Tanzania" },
+        { icon: HiOutlineLocationMarker, title: "Address", value: "Dar es salaam, Tanzania" },
         { icon: HiOutlineClock, title: "Business Hours", value: "Mon-Fri: 9AM - 6PM" },
     ]
 
