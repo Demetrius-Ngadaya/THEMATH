@@ -194,6 +194,15 @@ export default function ProductReports() {
 
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading && products.length === 0) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
+
     return (
         <div className="p-6">
             {/* Header */}

@@ -210,14 +210,14 @@ export default function AdminUsers() {
         })
     }
 
-    // Show loading spinner while fetching data
-    if (isLoading && users.length === 0) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading && users.length === 0) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="py-4 px-4 h-full flex flex-col">

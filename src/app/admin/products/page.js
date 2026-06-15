@@ -274,13 +274,14 @@ export default function AdminProducts() {
         }
     }
 
-    if (isLoading && products.length === 0) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading && products.length === 0) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="space-y-2 px-4">
@@ -331,7 +332,11 @@ export default function AdminProducts() {
                                 <TableColumn className="bg-gray-50">STOCK</TableColumn>
                                 <TableColumn className="bg-gray-50">ACTIONS</TableColumn>
                             </TableHeader>
-                            <TableBody emptyContent={"No products found"}>
+                            <TableBody
+                                emptyContent={"No products found"}
+                                isLoading={isLoading}
+                                loadingContent={<Spinner label="Loading..." />}
+                            >
                                 {products.map((product, index) => {
                                     const imagePath = product.images && product.images.length > 0
                                         ? product.images[0].path

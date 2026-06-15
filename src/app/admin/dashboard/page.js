@@ -110,13 +110,14 @@ export default function AdminDashboard() {
         return null
     }
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="p-4 md:p-6">
@@ -164,7 +165,8 @@ export default function AdminDashboard() {
                 {/* <Card>
                     <CardBody>
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold dark:text-white">Revenue Overview</h2>
+                            <h2 className="text-lg font-semibold">Revenue Overview</h2>
+                            <Button size="sm" variant="light">View Details</Button>
                         </div>
                         {chartData.length > 0 ? (
                             <ResponsiveContainer width="100%" height={300}>
@@ -191,8 +193,12 @@ export default function AdminDashboard() {
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex justify-center items-center h-300 text-gray-500">
-                                No revenue data available
+                            <div className="flex justify-center items-center h-[300px] text-gray-500">
+                                {isLoading ? (
+                                    <Spinner size="md" label="Loading chart data..." />
+                                ) : (
+                                    "No revenue data available"
+                                )}
                             </div>
                         )}
                     </CardBody>
@@ -202,7 +208,8 @@ export default function AdminDashboard() {
                 {/* <Card>
                     <CardBody>
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold dark:text-white">Orders Overview</h2>
+                            <h2 className="text-lg font-semibold">Orders Overview</h2>
+                            <Button size="sm" variant="light">View Details</Button>
                         </div>
                         {chartData.length > 0 ? (
                             <ResponsiveContainer width="100%" height={300}>
@@ -221,59 +228,18 @@ export default function AdminDashboard() {
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex justify-center items-center h-300 text-gray-500">
-                                No orders data available
+                            <div className="flex justify-center items-center h-[300px] text-gray-500">
+                                {isLoading ? (
+                                    <Spinner size="md" label="Loading chart data..." />
+                                ) : (
+                                    "No orders data available"
+                                )}
                             </div>
                         )}
                     </CardBody>
                 </Card> */}
 
                 {/* Order Status Pie Chart */}
-                
-                <Card>
-                    <CardBody>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold">Revenue Overview</h2>
-                            <Button size="sm" variant="light">View Details</Button>
-                        </div>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <AreaChart data={chartData}>
-                                <defs>
-                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fillOpacity={1} fill="url(#colorRevenue)" name="Revenue (TSh)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </CardBody>
-                </Card>
-
-                {/* Orders Chart */}
-                <Card>
-                    <CardBody>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold">Orders Overview</h2>
-                            <Button size="sm" variant="light">View Details</Button>
-                        </div>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="orders" fill="#10b981" name="Orders" radius={[8, 8, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </CardBody>
-                </Card>
                 <Card>
                     <CardBody>
                         <h2 className="text-lg font-semibold mb-4 dark:text-white">Order Status Distribution</h2>
@@ -299,8 +265,12 @@ export default function AdminDashboard() {
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex justify-center items-center h-300 text-gray-500">
-                                No order status data available
+                            <div className="flex justify-center items-center h-[300px] text-gray-500">
+                                {isLoading ? (
+                                    <Spinner size="md" label="Loading status data..." />
+                                ) : (
+                                    "No order status data available"
+                                )}
                             </div>
                         )}
                     </CardBody>
@@ -389,7 +359,11 @@ export default function AdminDashboard() {
                                 <TableColumn>STATUS</TableColumn>
                                 <TableColumn>DATE</TableColumn>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody
+                                isLoading={isLoading}
+                                loadingContent={<Spinner label="Loading orders..." />}
+                                emptyContent="No orders found"
+                            >
                                 {stats?.recent_orders?.length > 0 ? (
                                     stats.recent_orders.map((order) => (
                                         <TableRow key={order.id}>
@@ -413,9 +387,11 @@ export default function AdminDashboard() {
                                         </TableRow>
                                     ))
                                 ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="text-center">No orders found</TableCell>
-                                    </TableRow>
+                                    !isLoading && (
+                                        <TableRow>
+                                            <TableCell colSpan={5} className="text-center">No orders found</TableCell>
+                                        </TableRow>
+                                    )
                                 )}
                             </TableBody>
                         </Table>

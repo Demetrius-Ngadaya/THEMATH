@@ -200,13 +200,14 @@ export default function AdminHeroSliders() {
         })
     }
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="p-6">
@@ -232,7 +233,11 @@ export default function AdminHeroSliders() {
                                 <TableColumn>Status</TableColumn>
                                 <TableColumn>Actions</TableColumn>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody
+                                isLoading={isLoading}
+                                loadingContent={<Spinner label="Loading sliders..." />}
+                                emptyContent="No sliders found"
+                            >
                                 {sliders.map((slider) => (
                                     <TableRow key={slider.id}>
                                         <TableCell>
@@ -240,6 +245,7 @@ export default function AdminHeroSliders() {
                                                 src={getImageUrl(slider.image)}
                                                 alt={slider.title}
                                                 className="w-16 h-16 object-cover rounded-lg"
+                                                onError={(e) => { e.target.src = '/placeholder-image.jpg' }}
                                             />
                                         </TableCell>
                                         <TableCell className="font-medium">{slider.title}</TableCell>
@@ -321,6 +327,7 @@ export default function AdminHeroSliders() {
                                             src={getImageUrl(viewingSlider.image)}
                                             alt={viewingSlider.title}
                                             className="w-full max-h-64 object-cover rounded-lg shadow-lg"
+                                            onError={(e) => { e.target.src = '/placeholder-image.jpg' }}
                                         />
                                     </div>
                                 </div>

@@ -178,13 +178,14 @@ export default function AdminCategories() {
         }
     }
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div>
@@ -225,7 +226,11 @@ export default function AdminCategories() {
                                 <TableColumn>CREATED</TableColumn>
                                 <TableColumn>ACTIONS</TableColumn>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody
+                                isLoading={isLoading}
+                                loadingContent={<Spinner label="Loading categories..." />}
+                                emptyContent="No categories found"
+                            >
                                 {categories.map((category, index) => (
                                     <TableRow key={category.id}>
                                         <TableCell>{((page - 1) * perPage) + index + 1}</TableCell>

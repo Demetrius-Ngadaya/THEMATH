@@ -31,7 +31,7 @@ import {
 import {
     FiEdit2, FiTrash2, FiPlus, FiUpload, FiFacebook, FiTwitter,
     FiLinkedin, FiEye, FiMail, FiUser, FiBriefcase, FiInfo,
-    FiHash, FiCheckCircle, FiXCircle, FiCalendar
+    FiHash, FiCheckCircle, FiXCircle, FiCalendar, FiShare
 } from "react-icons/fi"
 import { showSuccess, showError, showConfirm } from "@/utils/sweetalert"
 import { getImageUrl, validateImage } from "@/utils/imageHelper"
@@ -198,13 +198,14 @@ export default function AdminTeamMembers() {
         }
     }
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-96">
-                <Spinner size="lg" color="primary" />
-            </div>
-        )
-    }
+    // COMMENTED OUT - Full page loading spinner removed for faster load
+    // if (isLoading) {
+    //     return (
+    //         <div className="flex justify-center items-center h-96">
+    //             <Spinner size="lg" color="primary" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="p-6">
@@ -230,7 +231,11 @@ export default function AdminTeamMembers() {
                                 <TableColumn>Status</TableColumn>
                                 <TableColumn>Actions</TableColumn>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody
+                                isLoading={isLoading}
+                                loadingContent={<Spinner label="Loading team members..." />}
+                                emptyContent="No team members found"
+                            >
                                 {members.map((member) => (
                                     <TableRow key={member.id}>
                                         <TableCell>
@@ -238,6 +243,7 @@ export default function AdminTeamMembers() {
                                                 src={getImageUrl(member.image)}
                                                 alt={member.name}
                                                 className="w-12 h-12 rounded-full object-cover"
+                                                onError={(e) => { e.target.src = '/placeholder-avatar.jpg' }}
                                             />
                                         </TableCell>
                                         <TableCell className="font-medium">{member.name}</TableCell>
