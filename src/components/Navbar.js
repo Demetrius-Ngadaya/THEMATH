@@ -1,4 +1,3 @@
-// components/Navbar.js - Fixed for ALL screen sizes including very small devices
 "use client"
 
 import { useState, useEffect } from "react"
@@ -118,10 +117,10 @@ export default function Navbar() {
 
                         {/* Right Icons - Always visible but hide some on very small screens */}
                         <div className="flex items-center space-x-0.5 sm:space-x-1 lg:space-x-3 xl:space-x-4">
-                            {/* Search Toggle - Always visible */}
+                            {/* Search Toggle - HIDDEN ON VERY SMALL SCREENS (below 480px) to make room for hamburger */}
                             <button
                                 onClick={() => setShowSearch(!showSearch)}
-                                className="rounded-full p-1 sm:p-1.5 lg:p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+                                className="rounded-full p-1 sm:p-1.5 lg:p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors hidden xs:inline-flex"
                                 aria-label="Search"
                             >
                                 <HiOutlineSearch className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
@@ -190,7 +189,6 @@ export default function Navbar() {
                             )}
 
                             {/* HAMBURGER MENU BUTTON - ALWAYS VISIBLE ON ALL SCREENS */}
-                            {/* Using inline styles to ensure visibility */}
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="inline-flex items-center justify-center rounded-full p-1 sm:p-1.5 lg:p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors lg:hidden"
@@ -276,8 +274,8 @@ export default function Navbar() {
                                             href={link.href}
                                             onClick={() => setIsOpen(false)}
                                             className={`flex items-center px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg text-xs sm:text-sm md:text-base font-medium transition-colors ${pathname === link.href
-                                                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                                ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                                                 }`}
                                         >
                                             {link.label}
