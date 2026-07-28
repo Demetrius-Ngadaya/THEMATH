@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
     FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff,
-    FiChevronUp, FiChevronDown, FiSearch, FiRefreshCw
+    FiChevronUp, FiChevronDown, FiSearch, FiRefreshCw,
+    FiX
 } from "react-icons/fi"
 import {
     Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,
@@ -34,6 +35,14 @@ export default function AdminServicesPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [editingService, setEditingService] = useState(null)
+
+    // Modal states for metrics and models
+    const { isOpen: isMetricModalOpen, onOpen: onMetricModalOpen, onClose: onMetricModalClose } = useDisclosure()
+    const { isOpen: isModelModalOpen, onOpen: onModelModalOpen, onClose: onModelModalClose } = useDisclosure()
+
+    const [metricInput, setMetricInput] = useState({ key: "", value: "" })
+    const [modelInput, setModelInput] = useState("")
+
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -53,7 +62,6 @@ export default function AdminServicesPage() {
     const fetchServices = async () => {
         try {
             setIsLoading(true)
-            // Use the public endpoint for fetching (no auth required)
             const response = await axios.get('/services')
             if (response.data.success) {
                 setServices(response.data.data)
@@ -100,11 +108,9 @@ export default function AdminServicesPage() {
     const handleSubmit = async () => {
         try {
             if (editingService) {
-                // Use admin endpoint for updates
                 await axios.put(`/admin/services/${editingService.id}`, formData)
                 toast.success('Service updated successfully')
             } else {
-                // Use admin endpoint for creation
                 await axios.post('/admin/services', formData)
                 toast.success('Service created successfully')
             }
@@ -119,7 +125,6 @@ export default function AdminServicesPage() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this service?')) {
             try {
-                // Use admin endpoint for deletion
                 await axios.delete(`/admin/services/${id}`)
                 toast.success('Service deleted successfully')
                 fetchServices()
@@ -132,7 +137,6 @@ export default function AdminServicesPage() {
 
     const handleToggleStatus = async (id) => {
         try {
-            // Use admin endpoint for toggling status
             await axios.post(`/admin/services/${id}/toggle-status`)
             toast.success('Service status updated')
             fetchServices()
@@ -142,16 +146,22 @@ export default function AdminServicesPage() {
         }
     }
 
+    // Metric Modal Handlers
     const handleAddMetric = () => {
-        const key = prompt('Enter metric key (e.g., methods, clients):')
-        if (key) {
-            const value = prompt('Enter metric value:')
-            if (value) {
-                setFormData(prev => ({
-                    ...prev,
-                    metrics: { ...prev.metrics, [key]: value }
-                }))
-            }
+        setMetricInput({ key: "", value: "" })
+        onMetricModalOpen()
+    }
+
+    const handleMetricSubmit = () => {
+        if (metricInput.key.trim() && metricInput.value.trim()) {
+            setFormData(prev => ({
+                ...prev,
+                metrics: { ...prev.metrics, [metricInput.key.trim()]: metricInput.value.trim() }
+            }))
+            onMetricModalClose()
+            toast.success('Metric added successfully')
+        } else {
+            toast.error('Please fill in both fields')
         }
     }
 
@@ -162,15 +172,25 @@ export default function AdminServicesPage() {
             ...prev,
             metrics: newMetrics
         }))
+        toast.success('Metric removed')
     }
 
+    // Model Modal Handlers
     const handleAddModel = () => {
-        const model = prompt('Enter model/method name:')
-        if (model) {
+        setModelInput("")
+        onModelModalOpen()
+    }
+
+    const handleModelSubmit = () => {
+        if (modelInput.trim()) {
             setFormData(prev => ({
                 ...prev,
-                models: [...prev.models, model]
+                models: [...prev.models, modelInput.trim()]
             }))
+            onModelModalClose()
+            toast.success('Model added successfully')
+        } else {
+            toast.error('Please enter a model name')
         }
     }
 
@@ -179,6 +199,7 @@ export default function AdminServicesPage() {
             ...prev,
             models: prev.models.filter((_, i) => i !== index)
         }))
+        toast.success('Model removed')
     }
 
     const filteredServices = services.filter(service =>
@@ -311,12 +332,34 @@ export default function AdminServicesPage() {
                 </Table>
             </div>
 
-            {/* Add/Edit Modal */}
+            {/* Add/Edit Service Modal */}
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
                 size="2xl"
                 scrollBehavior="inside"
+                motionProps={{
+                    variants: {
+                        enter: {
+                            opacity: 1,
+                            scale: 1,
+                            y: 0,
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeOut"
+                            }
+                        },
+                        exit: {
+                            opacity: 0,
+                            scale: 0.95,
+                            y: 20,
+                            transition: {
+                                duration: 0.2,
+                                ease: "easeIn"
+                            }
+                        }
+                    }
+                }}
             >
                 <ModalContent>
                     <ModalHeader>
@@ -418,26 +461,38 @@ export default function AdminServicesPage() {
                                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                         Metrics
                                     </label>
-                                    <Button size="sm" variant="flat" onPress={handleAddMetric}>
+                                    <Button
+                                        size="sm"
+                                        color="primary"
+                                        variant="flat"
+                                        startContent={<FiPlus className="h-3 w-3" />}
+                                        onPress={handleAddMetric}
+                                    >
                                         Add Metric
                                     </Button>
                                 </div>
                                 <div className="space-y-2">
-                                    {Object.entries(formData.metrics).map(([key, value]) => (
-                                        <div key={key} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded">
-                                            <span className="flex-1">
-                                                <strong>{key}:</strong> {value}
-                                            </span>
-                                            <Button
-                                                size="sm"
-                                                color="danger"
-                                                variant="light"
-                                                onPress={() => handleRemoveMetric(key)}
-                                            >
-                                                <FiTrash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ))}
+                                    {Object.entries(formData.metrics).length === 0 ? (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">No metrics added yet</p>
+                                    ) : (
+                                        Object.entries(formData.metrics).map(([key, value]) => (
+                                            <div key={key} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-2 rounded-lg">
+                                                <span className="flex-1 text-sm">
+                                                    <strong className="text-gray-700 dark:text-gray-300">{key}:</strong>
+                                                    <span className="text-gray-600 dark:text-gray-400 ml-2">{value}</span>
+                                                </span>
+                                                <Button
+                                                    size="sm"
+                                                    color="danger"
+                                                    variant="light"
+                                                    isIconOnly
+                                                    onPress={() => handleRemoveMetric(key)}
+                                                >
+                                                    <FiTrash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
 
@@ -447,20 +502,31 @@ export default function AdminServicesPage() {
                                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                         Methods & Models
                                     </label>
-                                    <Button size="sm" variant="flat" onPress={handleAddModel}>
+                                    <Button
+                                        size="sm"
+                                        color="primary"
+                                        variant="flat"
+                                        startContent={<FiPlus className="h-3 w-3" />}
+                                        onPress={handleAddModel}
+                                    >
                                         Add Model
                                     </Button>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {formData.models.map((model, index) => (
-                                        <Chip
-                                            key={index}
-                                            onClose={() => handleRemoveModel(index)}
-                                            variant="flat"
-                                        >
-                                            {model}
-                                        </Chip>
-                                    ))}
+                                    {formData.models.length === 0 ? (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">No models added yet</p>
+                                    ) : (
+                                        formData.models.map((model, index) => (
+                                            <Chip
+                                                key={index}
+                                                onClose={() => handleRemoveModel(index)}
+                                                variant="flat"
+                                                color="primary"
+                                            >
+                                                {model}
+                                            </Chip>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -471,6 +537,137 @@ export default function AdminServicesPage() {
                         </Button>
                         <Button color="primary" onPress={handleSubmit}>
                             {editingService ? 'Update' : 'Create'}
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Add Metric Modal */}
+            <Modal
+                isOpen={isMetricModalOpen}
+                onClose={onMetricModalClose}
+                size="md"
+                motionProps={{
+                    variants: {
+                        enter: {
+                            opacity: 1,
+                            scale: 1,
+                            y: 0,
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeOut"
+                            }
+                        },
+                        exit: {
+                            opacity: 0,
+                            scale: 0.9,
+                            y: 20,
+                            transition: {
+                                duration: 0.2,
+                                ease: "easeIn"
+                            }
+                        }
+                    }
+                }}
+            >
+                <ModalContent>
+                    <ModalHeader>Add Metric</ModalHeader>
+                    <ModalBody>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Metric Key (e.g., methods, clients)
+                                </label>
+                                <Input
+                                    value={metricInput.key}
+                                    onChange={(e) => setMetricInput({ ...metricInput, key: e.target.value })}
+                                    placeholder="Enter metric key..."
+                                    autoFocus
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Metric Value
+                                </label>
+                                <Input
+                                    value={metricInput.value}
+                                    onChange={(e) => setMetricInput({ ...metricInput, value: e.target.value })}
+                                    placeholder="Enter metric value..."
+                                />
+                            </div>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" variant="light" onPress={onMetricModalClose}>
+                            Cancel
+                        </Button>
+                        <Button
+                            color="primary"
+                            onPress={handleMetricSubmit}
+                            isDisabled={!metricInput.key.trim() || !metricInput.value.trim()}
+                        >
+                            Add Metric
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            {/* Add Model Modal */}
+            <Modal
+                isOpen={isModelModalOpen}
+                onClose={onModelModalClose}
+                size="md"
+                motionProps={{
+                    variants: {
+                        enter: {
+                            opacity: 1,
+                            scale: 1,
+                            y: 0,
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeOut"
+                            }
+                        },
+                        exit: {
+                            opacity: 0,
+                            scale: 0.9,
+                            y: 20,
+                            transition: {
+                                duration: 0.2,
+                                ease: "easeIn"
+                            }
+                        }
+                    }
+                }}
+            >
+                <ModalContent>
+                    <ModalHeader>Add Method/Model</ModalHeader>
+                    <ModalBody>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Model/Method Name
+                            </label>
+                            <Input
+                                value={modelInput}
+                                onChange={(e) => setModelInput(e.target.value)}
+                                placeholder="Enter model/method name..."
+                                autoFocus
+                            />
+                            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                Example: Linear Models, ARIMA, Thematic Analysis, etc.
+                            </p>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" variant="light" onPress={onModelModalClose}>
+                            Cancel
+                        </Button>
+                        <Button
+                            color="primary"
+                            onPress={handleModelSubmit}
+                            isDisabled={!modelInput.trim()}
+                        >
+                            Add Model
                         </Button>
                     </ModalFooter>
                 </ModalContent>
