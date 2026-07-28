@@ -24,6 +24,7 @@ import { FaDatabase, FaRegLightbulb, FaRocket, FaShieldAlt } from "react-icons/f
 import { FiLoader } from "react-icons/fi"
 import axios from "@/services/api"
 import ServiceCardSkeleton from "@/components/skeletons/ServiceCardSkeleton"
+import DataFlowHero from "@/components/dataFlowHero"
 
 // Icon mapping for dynamic icons
 const iconMap = {
@@ -169,36 +170,8 @@ export default function ServicesPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-            {/* Hero Section - Minimalist */}
-            <section className="relative overflow-hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 via-transparent to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20" />
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="text-center max-w-3xl mx-auto"
-                    >
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
-                            Data Analysis
-                            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Services</span>
-                        </h1>
-                        <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-8">
-                            Expert statistical consulting and research support for academic, corporate, and organizational success
-                        </p>
-                        <div className="flex flex-wrap gap-4 justify-center">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
-                            >
-                                <FaRocket className="h-5 w-5" />
-                                Start Your Project with us + (255) 717 275 661
-                            </motion.button>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+            {/* Hero Section with DataFlow Background */}
+            <DataFlowHero />
 
             {/* Stats Section */}
             <section className="py-12 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-900 dark:to-purple-900">
