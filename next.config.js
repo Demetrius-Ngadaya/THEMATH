@@ -9,7 +9,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'https://backendapi.emcc-lab.com/',
+                hostname: 'https://backendapi.emcc-lab.com',
                 pathname: '/storage/**',
             },
             {

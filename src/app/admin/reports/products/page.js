@@ -64,7 +64,7 @@ export default function ProductReports() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/products', {
+            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/products', {
                 params: {
                     page,
                     per_page: perPage,
@@ -105,7 +105,7 @@ export default function ProductReports() {
     const fetchCategories = async () => {
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/categories', {
+            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/categories', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setCategories(response.data.data || response.data || [])

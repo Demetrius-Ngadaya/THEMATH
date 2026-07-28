@@ -81,7 +81,7 @@ export default function AdminUsers() {
                 return
             }
 
-            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/users', {
+            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/users', {
                 params: {
                     search: search || undefined,
                     page: page,
@@ -133,7 +133,7 @@ export default function AdminUsers() {
             }
 
             if (editingUser) {
-                await axios.put(`https://backendapi.emcc-lab.com//api/admin/users/${editingUser.id}`,
+                await axios.put(`https://backendapi.emcc-lab.com/api/admin/users/${editingUser.id}`,
                     updateData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
@@ -156,7 +156,7 @@ export default function AdminUsers() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com//api/admin/users/${userId}`, {
+                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'User deleted successfully')
