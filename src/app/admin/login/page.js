@@ -20,7 +20,7 @@ export default function AdminLogin() {
         setError('')
 
         try {
-            const response = await axios.post('https://backendapi.emcc-lab.com/api/admin/login', {
+            const response = await axios.post('https://backendapi.emcc-lab.com//api/admin/login', {
                 email, password
             })
 

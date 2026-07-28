@@ -27,7 +27,7 @@ export default function ResearchPage() {
     const fetchPapers = async () => {
         setIsLoading(true)
         try {
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/research/papers', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/research/papers', {
                 params: { search, category, page, per_page: 12 }
             })
             setPapers(response.data.data)
@@ -41,7 +41,7 @@ export default function ResearchPage() {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/research/categories')
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/research/categories')
             setCategories(response.data)
         } catch (error) {
             console.error("Error fetching categories:", error)
@@ -50,7 +50,7 @@ export default function ResearchPage() {
 
     const handleDownload = async (id) => {
         try {
-            window.open(`https://backendapi.emcc-lab.com/api/research/papers/${id}/download`, '_blank')
+            window.open(`https://backendapi.emcc-lab.com//api/research/papers/${id}/download`, '_blank')
         } catch (error) {
             console.error("Error downloading paper:", error)
         }

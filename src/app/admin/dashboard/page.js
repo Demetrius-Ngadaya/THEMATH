@@ -43,7 +43,7 @@ export default function AdminDashboard() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/dashboard/stats`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/dashboard/stats`, {
                 params: { period: chartPeriod },
                 headers: { Authorization: `Bearer ${token}` }
             })

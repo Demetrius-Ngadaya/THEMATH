@@ -108,11 +108,11 @@ export default function Home() {
       setIsLoading(true)
       try {
         // Fetch hero sliders
-        const slidersResponse = await axios.get('https://backendapi.emcc-lab.com/api/hero-sliders')
+        const slidersResponse = await axios.get('https://backendapi.emcc-lab.com//api/hero-sliders')
         setHeroSliders(slidersResponse.data)
 
         // Fetch team members
-        const teamResponse = await axios.get('https://backendapi.emcc-lab.com/api/team-members')
+        const teamResponse = await axios.get('https://backendapi.emcc-lab.com//api/team-members')
         setTeamMembers(teamResponse.data)
 
         // Fetch products

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com//api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -25,7 +25,7 @@ api.interceptors.request.use(async (config) => {
 
 export const fetchCsrfCookie = async () => {
     try {
-        await axios.get('https://backendapi.emcc-lab.com//sanctum/csrf-cookie', {
+        await axios.get('https://backendapi.emcc-lab.com///sanctum/csrf-cookie', {
             withCredentials: true,
         });
         console.log('CSRF cookie fetched');

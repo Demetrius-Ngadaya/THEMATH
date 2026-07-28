@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     HiOutlineChartBar,
@@ -21,6 +21,25 @@ import {
     HiOutlineCheckCircle
 } from "react-icons/hi"
 import { FaDatabase, FaRegLightbulb, FaRocket, FaShieldAlt } from "react-icons/fa"
+import { FiLoader } from "react-icons/fi"
+import axios from "@/services/api"
+import ServiceCardSkeleton from "@/components/skeletons/ServiceCardSkeleton"
+
+// Icon mapping for dynamic icons
+const iconMap = {
+    HiOutlineChartBar: HiOutlineChartBar,
+    HiOutlineClock: HiOutlineClock,
+    HiOutlineChip: HiOutlineChip,
+    HiOutlineDocumentText: HiOutlineDocumentText,
+    HiOutlineAcademicCap: HiOutlineAcademicCap,
+    HiOutlineLink: HiOutlineLink,
+    HiOutlineSearch: HiOutlineSearch,
+    HiOutlineDownload: HiOutlineDownload,
+    FaDatabase: FaDatabase,
+    FaRegLightbulb: FaRegLightbulb,
+    FaRocket: FaRocket,
+    FaShieldAlt: FaShieldAlt
+}
 
 // Animation variants
 const containerVariants = {
@@ -37,122 +56,41 @@ const itemVariants = {
 }
 
 export default function ServicesPage() {
+    const [services, setServices] = useState([])
     const [selectedService, setSelectedService] = useState(null)
-    const [viewMode, setViewMode] = useState("grid") // grid or list
+    const [viewMode, setViewMode] = useState("grid")
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-    // Service Data with enriched information
-    const services = [
-        {
-            id: "cross-sectional",
-            name: "Cross-Sectional Analysis",
-            icon: HiOutlineChartBar,
-            color: "blue",
-            description: "Analyze data collected at a single point in time to identify patterns and relationships.",
-            metrics: { methods: 15, clients: 120, experience: "8+ years" },
-            models: [
-                "Linear Models", "Limited Dependent Variable Models", "Count Data Models",
-                "Censored and Truncated Models", "Instrumental Variable Models", "Structural Equation Modeling",
-                "Survival Analysis", "Biostatistics & Epidemiology", "Multivariate Analysis"
-            ],
-            popular: true
-        },
-        {
-            id: "time-series",
-            name: "Time Series Analysis",
-            icon: HiOutlineClock,
-            color: "green",
-            description: "Forecast future trends and understand temporal patterns in your data.",
-            metrics: { methods: 12, clients: 85, experience: "10+ years" },
-            models: [
-                "Box-Jenkins (ARIMA)", "Exponential Smoothing", "Multivariate Time Series",
-                "Volatility Models (GARCH)", "State Space Models", "Frequency Domain Analysis",
-                "Nonlinear Time Series", "Bayesian Time Series", "Cointegration Models"
-            ],
-            popular: true
-        },
-        {
-            id: "panel",
-            name: "Panel Data Analysis",
-            icon: FaDatabase,
-            color: "purple",
-            description: "Combine cross-sectional and time-series data for robust insights.",
-            metrics: { methods: 10, clients: 64, experience: "7+ years" },
-            models: [
-                "Fixed/Random Effects", "Dynamic Panel GMM", "Panel Cointegration",
-                "Error Correction Models", "Heterogeneous Panel ARDL", "Spatial Panel Models",
-                "Nonlinear Panel Models", "Quantile Panel Models"
-            ],
-            popular: false
-        },
-        {
-            id: "machine-learning",
-            name: "Machine Learning",
-            icon: HiOutlineChip,
-            color: "red",
-            description: "Leverage AI to uncover hidden patterns and make predictions.",
-            metrics: { methods: 8, clients: 95, experience: "5+ years" },
-            models: [
-                "Supervised Learning", "Unsupervised Learning", "Deep Learning (Neural Networks)",
-                "Reinforcement Learning", "Probabilistic Models", "Ensemble Methods",
-                "Natural Language Processing", "Computer Vision"
-            ],
-            popular: true
-        },
-        {
-            id: "qualitative",
-            name: "Qualitative Analysis",
-            icon: HiOutlineDocumentText,
-            color: "yellow",
-            description: "Extract meaning from text, interviews, and unstructured data.",
-            metrics: { methods: 8, clients: 73, experience: "9+ years" },
-            models: [
-                "Thematic Analysis", "Content Analysis", "Narrative Analysis",
-                "Discourse Analysis", "Grounded Theory", "IPA",
-                "Ethnographic Analysis", "Case Study Analysis"
-            ],
-            popular: false
-        },
-        {
-            id: "me",
-            name: "M&E Services",
-            icon: HiOutlineSearch,
-            color: "indigo",
-            description: "Measure impact and improve program effectiveness.",
-            metrics: { methods: 12, clients: 48, experience: "6+ years" },
-            models: [
-                "Logical Framework", "Theory of Change", "Impact Evaluation (DiD, PSM, RDD)",
-                "RCT Analysis", "Cost-Benefit Analysis", "Outcome Mapping",
-                "Indicator Tracking", "Results-Based Monitoring"
-            ],
-            popular: true
-        },
-        {
-            id: "software",
-            name: "Software Training",
-            icon: HiOutlineDownload,
-            color: "gray",
-            description: "Master industry-standard tools for data analysis.",
-            metrics: { tools: 25, trained: 500, courses: 15 },
-            models: [
-                "SPSS", "Stata", "R/Python", "SAS", "EViews", "SmartPLS",
-                "MATLAB", "Tableau/Power BI", "NVivo", "Excel Advanced"
-            ],
-            popular: false
-        },
-        {
-            id: "training",
-            name: "Training Programs",
-            icon: HiOutlineAcademicCap,
-            color: "pink",
-            description: "Build capacity with customized workshops and courses.",
-            metrics: { programs: 12, participants: 850, satisfaction: "98%" },
-            models: [
-                "Research Methods", "Quantitative Analysis", "Statistical Software",
-                "Qualitative Analysis", "Machine Learning", "Data Visualization",
-                "Academic Writing", "M&E Training"
-            ],
-            popular: false
+    // Fetch services from API
+    useEffect(() => {
+        fetchServices()
+    }, [])
+
+    const fetchServices = async () => {
+        try {
+            setIsLoading(true)
+            setError(null)
+            const response = await axios.get('/services?active=true')
+            if (response.data.success) {
+                setServices(response.data.data)
+            } else {
+                setError('Failed to fetch services')
+            }
+        } catch (err) {
+            console.error('Error fetching services:', err)
+            setError('Could not load services. Please try again later.')
+        } finally {
+            setIsLoading(false)
         }
+    }
+
+    // Stats data (could also be from API)
+    const stats = [
+        { value: "150+", label: "Projects Completed", icon: HiOutlineBriefcase },
+        { value: "98%", label: "Client Satisfaction", icon: HiOutlineStar },
+        { value: "12+", label: "Years Experience", icon: HiOutlineTrendingUp },
+        { value: "500+", label: "Researchers Trained", icon: HiOutlineUsers }
     ]
 
     const processSteps = [
@@ -164,14 +102,70 @@ export default function ServicesPage() {
         { step: "06", title: "Review", desc: "Quality assurance and final delivery", duration: "2-3 days" }
     ]
 
-    const stats = [
-        { value: "150+", label: "Projects Completed", icon: HiOutlineBriefcase },
-        { value: "98%", label: "Client Satisfaction", icon: HiOutlineStar },
-        { value: "12+", label: "Years Experience", icon: HiOutlineTrendingUp },
-        { value: "500+", label: "Researchers Trained", icon: HiOutlineUsers }
-    ]
-
     const selectedServiceData = services.find(s => s.id === selectedService)
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+                {/* Hero Skeleton */}
+                <section className="relative overflow-hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+                        <div className="text-center max-w-3xl mx-auto">
+                            <div className="h-16 bg-slate-200 dark:bg-slate-700 rounded-lg mb-6 animate-pulse" />
+                            <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded-lg mb-4 w-3/4 mx-auto animate-pulse" />
+                            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg mb-8 w-1/2 mx-auto animate-pulse" />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Stats Skeleton */}
+                <section className="py-12 bg-gradient-to-r from-blue-600 to-purple-600">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="text-center text-white">
+                                    <div className="h-8 w-8 mx-auto mb-2 bg-white/20 rounded animate-pulse" />
+                                    <div className="h-8 bg-white/20 rounded mb-2 animate-pulse" />
+                                    <div className="h-4 bg-white/20 rounded w-20 mx-auto animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Services Grid Skeleton */}
+                <section className="py-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                                <ServiceCardSkeleton key={i} />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+                <div className="text-center max-w-md mx-auto p-8">
+                    <div className="text-6xl mb-4">😕</div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                        Something went wrong
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
+                    <button
+                        onClick={fetchServices}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -259,7 +253,17 @@ export default function ServicesPage() {
                     </div>
 
                     {/* Services Display */}
-                    {viewMode === "grid" ? (
+                    {services.length === 0 ? (
+                        <div className="text-center py-16">
+                            <div className="text-6xl mb-4">🔍</div>
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                No services available
+                            </h3>
+                            <p className="text-gray-600 dark:text-gray-400">
+                                Check back later for our services.
+                            </p>
+                        </div>
+                    ) : viewMode === "grid" ? (
                         <motion.div
                             variants={containerVariants}
                             initial="hidden"
@@ -267,7 +271,8 @@ export default function ServicesPage() {
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                         >
                             {services.map((service) => {
-                                const Icon = service.icon
+                                // Get the correct icon component
+                                const IconComponent = iconMap[service.icon] || HiOutlineChartBar
                                 const colorClasses = {
                                     blue: "from-blue-500 to-blue-600",
                                     green: "from-green-500 to-green-600",
@@ -276,8 +281,12 @@ export default function ServicesPage() {
                                     yellow: "from-yellow-500 to-yellow-600",
                                     indigo: "from-indigo-500 to-indigo-600",
                                     gray: "from-gray-500 to-gray-600",
-                                    pink: "from-pink-500 to-pink-600"
+                                    pink: "from-pink-500 to-pink-600",
+                                    orange: "from-orange-500 to-orange-600",
+                                    teal: "from-teal-500 to-teal-600"
                                 }
+                                const colorClass = colorClasses[service.color] || colorClasses.blue
+
                                 return (
                                     <motion.div
                                         key={service.id}
@@ -287,14 +296,14 @@ export default function ServicesPage() {
                                         className="group cursor-pointer"
                                     >
                                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-slate-200 dark:border-slate-700 h-full">
-                                            <div className={`h-2 bg-gradient-to-r ${colorClasses[service.color]}`} />
+                                            <div className={`h-2 bg-gradient-to-r ${colorClass}`} />
                                             <div className="p-6">
-                                                <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${colorClasses[service.color]} bg-opacity-10 flex items-center justify-center mb-4`}>
-                                                    <Icon className="h-6 w-6 text-white" />
+                                                <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${colorClass} bg-opacity-10 flex items-center justify-center mb-4`}>
+                                                    <IconComponent className="h-6 w-6 text-white" />
                                                 </div>
                                                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                                                     {service.name}
-                                                    {service.popular && (
+                                                    {service.is_popular && (
                                                         <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
                                                             Popular
                                                         </span>
@@ -304,7 +313,9 @@ export default function ServicesPage() {
                                                     {service.description}
                                                 </p>
                                                 <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
-                                                    <span>{service.metrics.methods || service.metrics.tools} methods</span>
+                                                    <span>
+                                                        {service.metrics ? Object.keys(service.metrics).length : 0} metrics
+                                                    </span>
                                                     <span className="flex items-center gap-1">
                                                         Learn more
                                                         <HiOutlineChevronRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
@@ -324,7 +335,7 @@ export default function ServicesPage() {
                             className="space-y-4"
                         >
                             {services.map((service) => {
-                                const Icon = service.icon
+                                const IconComponent = iconMap[service.icon] || HiOutlineChartBar
                                 const colorClasses = {
                                     blue: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
                                     green: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
@@ -335,6 +346,8 @@ export default function ServicesPage() {
                                     gray: "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400",
                                     pink: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400"
                                 }
+                                const colorClass = colorClasses[service.color] || colorClasses.blue
+
                                 return (
                                     <motion.div
                                         key={service.id}
@@ -344,11 +357,18 @@ export default function ServicesPage() {
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">
-                                                <div className={`p-2 rounded-lg ${colorClasses[service.color]}`}>
-                                                    <Icon className="h-5 w-5" />
+                                                <div className={`p-2 rounded-lg ${colorClass}`}>
+                                                    <IconComponent className="h-5 w-5" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-semibold text-slate-900 dark:text-white">{service.name}</h3>
+                                                    <h3 className="font-semibold text-slate-900 dark:text-white">
+                                                        {service.name}
+                                                        {service.is_popular && (
+                                                            <span className="ml-2 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
+                                                                Popular
+                                                            </span>
+                                                        )}
+                                                    </h3>
                                                     <p className="text-sm text-slate-600 dark:text-slate-400">{service.description}</p>
                                                 </div>
                                             </div>
@@ -383,7 +403,12 @@ export default function ServicesPage() {
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                                            <selectedServiceData.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                            {iconMap[selectedServiceData.icon] &&
+                                                (() => {
+                                                    const Icon = iconMap[selectedServiceData.icon]
+                                                    return <Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                                })()
+                                            }
                                         </div>
                                         <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedServiceData.name}</h2>
                                     </div>
@@ -398,25 +423,29 @@ export default function ServicesPage() {
                             <div className="p-6 space-y-6">
                                 <p className="text-slate-600 dark:text-slate-300">{selectedServiceData.description}</p>
 
-                                <div className="grid grid-cols-3 gap-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                                    {Object.entries(selectedServiceData.metrics).map(([key, value]) => (
-                                        <div key={key} className="text-center">
-                                            <div className="text-xl font-bold text-slate-900 dark:text-white">{value}</div>
-                                            <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">{key}</div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div>
-                                    <h3 className="font-semibold text-slate-900 dark:text-white mb-3">Key Methods & Models</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {selectedServiceData.models.map((model, idx) => (
-                                            <span key={idx} className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full text-sm">
-                                                {model}
-                                            </span>
+                                {selectedServiceData.metrics && Object.keys(selectedServiceData.metrics).length > 0 && (
+                                    <div className="grid grid-cols-3 gap-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                                        {Object.entries(selectedServiceData.metrics).map(([key, value]) => (
+                                            <div key={key} className="text-center">
+                                                <div className="text-xl font-bold text-slate-900 dark:text-white">{value}</div>
+                                                <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">{key}</div>
+                                            </div>
                                         ))}
                                     </div>
-                                </div>
+                                )}
+
+                                {selectedServiceData.models && selectedServiceData.models.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold text-slate-900 dark:text-white mb-3">Key Methods & Models</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedServiceData.models.map((model, idx) => (
+                                                <span key={idx} className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full text-sm">
+                                                    {model}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="flex gap-3 pt-4">
                                     <button className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
@@ -528,7 +557,7 @@ export default function ServicesPage() {
                         <div className="flex flex-wrap gap-4 justify-center">
                             <motion.a
                                 whileHover={{ scale: 1.05 }}
-                            href="info@themath.com"
+                                href="mailto:info@themath.com"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:shadow-lg transition-all"
                             >
                                 <HiOutlineMail className="h-5 w-5" />

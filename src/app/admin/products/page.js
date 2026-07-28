@@ -86,7 +86,7 @@ export default function AdminProducts() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/products', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/products', {
                 params: { search: debouncedSearch, page, per_page: perPage },
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -104,7 +104,7 @@ export default function AdminProducts() {
     const fetchCategories = async () => {
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/categories', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/categories', {
                 params: { per_page: 100 },
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -146,7 +146,7 @@ export default function AdminProducts() {
 
             if (editingProduct) {
                 // Update product
-                await axios.put(`https://backendapi.emcc-lab.com/api/admin/products/${editingProduct.id}`,
+                await axios.put(`https://backendapi.emcc-lab.com//api/admin/products/${editingProduct.id}`,
                     formData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
@@ -154,7 +154,7 @@ export default function AdminProducts() {
                 showSuccess('Updated', 'Product updated successfully')
             } else {
                 // Create new product
-                const response = await axios.post('https://backendapi.emcc-lab.com/api/admin/products',
+                const response = await axios.post('https://backendapi.emcc-lab.com//api/admin/products',
                     formData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
@@ -168,7 +168,7 @@ export default function AdminProducts() {
                 imageData.append('image', selectedImage)
 
                 const uploadResponse = await axios.post(
-                    `https://backendapi.emcc-lab.com/api/admin/products/${productId}/images`,
+                    `https://backendapi.emcc-lab.com//api/admin/products/${productId}/images`,
                     imageData,
                     {
                         headers: {
@@ -204,7 +204,7 @@ export default function AdminProducts() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/products/${productId}`, {
+                await axios.delete(`https://backendapi.emcc-lab.com//api/admin/products/${productId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'Product deleted successfully')

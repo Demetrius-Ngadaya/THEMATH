@@ -73,7 +73,7 @@ export default function OrderReports() {
                 date_to: dateRange.end
             }
 
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/orders', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/orders', {
                 params,
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -106,7 +106,7 @@ export default function OrderReports() {
     const fetchChartData = async () => {
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/dashboard/stats', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/dashboard/stats', {
                 params: { period: 'month' },
                 headers: { Authorization: `Bearer ${token}` }
             })

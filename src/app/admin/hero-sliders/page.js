@@ -62,7 +62,7 @@ export default function AdminHeroSliders() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/hero-sliders', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/hero-sliders', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setSliders(response.data)
@@ -94,13 +94,13 @@ export default function AdminHeroSliders() {
 
             if (editingSlider) {
                 submitData.append('_method', 'PUT')
-                await axios.post(`https://backendapi.emcc-lab.com/api/admin/hero-sliders/${editingSlider.id}`,
+                await axios.post(`https://backendapi.emcc-lab.com//api/admin/hero-sliders/${editingSlider.id}`,
                     submitData,
                     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
                 )
                 showSuccess('Updated', 'Slider updated successfully')
             } else {
-                await axios.post('https://backendapi.emcc-lab.com/api/admin/hero-sliders',
+                await axios.post('https://backendapi.emcc-lab.com//api/admin/hero-sliders',
                     submitData,
                     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
                 )
@@ -123,7 +123,7 @@ export default function AdminHeroSliders() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/hero-sliders/${sliderId}`, {
+                await axios.delete(`https://backendapi.emcc-lab.com//api/admin/hero-sliders/${sliderId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'Slider deleted successfully')

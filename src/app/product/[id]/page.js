@@ -134,7 +134,7 @@ export default function ProductPage() {
                     <div className="w-full h-full flex items-center justify-center text-white">
                         {product.images?.[0] ? (
                             <Image
-                                src={`https://backendapi.emcc-lab.com//storage/${product.images[0].path}`}
+                                src={`https://backendapi.emcc-lab.com///storage/${product.images[0].path}`}
                                 alt={product.name}
                                 fill
                                 className="object-cover"

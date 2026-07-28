@@ -47,7 +47,7 @@ export default function AdminResearch() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/research-papers`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/research-papers`, {
                 params: { search, page, per_page: perPage },
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -92,7 +92,7 @@ export default function AdminResearch() {
                 formDataToSend.append('pdf_file', selectedFile)
             }
 
-            const url = `${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/research-papers`
+            const url = `${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/research-papers`
 
             if (editingPaper) {
                 formDataToSend.append('_method', 'PUT')
@@ -130,7 +130,7 @@ export default function AdminResearch() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/research-papers/${id}`, {
+                await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/admin/research-papers/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Success', 'Research paper deleted successfully')
@@ -581,7 +581,7 @@ export default function AdminResearch() {
                                                     startContent={<FiDownload />}
                                                     className="w-full justify-start"
                                                     onPress={() => {
-                                                        window.open(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/research/papers/${viewingPaper.id}/download`, '_blank')
+                                                        window.open(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/'}/api/research/papers/${viewingPaper.id}/download`, '_blank')
                                                     }}
                                                 >
                                                     Download PDF Document

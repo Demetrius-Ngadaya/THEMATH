@@ -65,7 +65,7 @@ export default function AdminTeamMembers() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/team-members', {
+            const response = await axios.get('https://backendapi.emcc-lab.com//api/admin/team-members', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setMembers(response.data)
@@ -99,13 +99,13 @@ export default function AdminTeamMembers() {
 
             if (editingMember) {
                 submitData.append('_method', 'PUT')
-                await axios.post(`https://backendapi.emcc-lab.com/api/admin/team-members/${editingMember.id}`,
+                await axios.post(`https://backendapi.emcc-lab.com//api/admin/team-members/${editingMember.id}`,
                     submitData,
                     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
                 )
                 showSuccess('Updated', 'Team member updated successfully')
             } else {
-                await axios.post('https://backendapi.emcc-lab.com/api/admin/team-members',
+                await axios.post('https://backendapi.emcc-lab.com//api/admin/team-members',
                     submitData,
                     { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
                 )
@@ -128,7 +128,7 @@ export default function AdminTeamMembers() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/team-members/${memberId}`, {
+                await axios.delete(`https://backendapi.emcc-lab.com//api/admin/team-members/${memberId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'Team member deleted successfully')

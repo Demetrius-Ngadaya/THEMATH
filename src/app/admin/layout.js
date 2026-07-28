@@ -140,6 +140,7 @@ export default function AdminLayout({ children }) {
         { href: "/admin/dashboard", label: "Dashboard", icon: FiHome, color: "blue" },
         { href: "/admin/orders", label: "Orders", icon: FiShoppingBag, color: "purple" },
         { href: "/admin/products", label: "Products", icon: FiPackage, color: "green" },
+        { href: "/admin/services", label: "Services", icon: FiFileText, color: "indigo" },
         { href: "/admin/research", label: "Research", icon: FiFileText, color: "indigo" },
         { href: "/admin/users", label: "Users", icon: FiUsers, color: "orange" },
         { href: "/admin/team-members", label: "Team Members", icon: FiUserCheck, color: "pink" },
