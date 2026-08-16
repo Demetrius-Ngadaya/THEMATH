@@ -69,7 +69,7 @@ export default function Footer() {
         <footer className="mt-16 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
             <div className="container mx-auto px-4 py-12">
                 {/* Newsletter Section */}
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -92,7 +92,7 @@ export default function Footer() {
                             Subscribe
                         </button>
                     </form>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Links Grid */}
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">

@@ -138,6 +138,10 @@ export default function AdminLayout({ children }) {
     // Navigation items without descriptions
     const navItems = [
         { href: "/admin/dashboard", label: "Dashboard", icon: FiHome, color: "blue" },
+        { href: "/admin/about-hero-sliders", label: "About Hero Sliders", icon: FiImage, color: "indigo" },
+        { href: "/admin/about-content", label: "About Content", icon: FiFileText, color: "purple" },
+        { href: "/admin/about-services", label: "About Services", icon: FiFileText, color: "green" },
+        { href: "/admin/stem-products", label: "STEM Products", icon: FiPackage, color: "orange" },
         { href: "/admin/orders", label: "Orders", icon: FiShoppingBag, color: "purple" },
         { href: "/admin/products", label: "Products", icon: FiPackage, color: "green" },
         { href: "/admin/services", label: "Services", icon: FiFileText, color: "indigo" },

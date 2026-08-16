@@ -52,6 +52,9 @@ api.interceptors.response.use(
     }
 );
 
+// Export the raw axios instance for file uploads
+export const axiosInstance = api;
+
 export const API = {
     // Generic methods
     get: (url, params) => api.get(url, { params }),
@@ -61,7 +64,6 @@ export const API = {
 
     // Auth
     register: async (data) => {
-        // await fetchCsrfCookie();
         return api.post('/register', data);
     },
     login: async (data) => {
