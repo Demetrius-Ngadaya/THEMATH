@@ -446,25 +446,25 @@ export default function DataFlowHero() {
                     </div>
                 </div>
 
-                {/* Scatter Plot */}
-                <div className="absolute top-[330px] right-[24px] z-10 pointer-events-none animate-float-slow" style={{ animationDelay: '1.6s' }}>
-                    <div className="bg-[rgba(10,14,26,0.82)] border border-[rgba(255,255,255,0.09)] rounded-xl p-3 backdrop-blur-[14px] shadow-xl w-[210px]">
+                {/* Scatter Plot - repositioned and full size */}
+                <div className="absolute top-[82px] right-[24px] z-10 pointer-events-none animate-float-slow" style={{ animationDelay: '1.6s' }}>
+                    <div className="bg-[rgba(10,14,26,0.82)] border border-[rgba(255,255,255,0.09)] rounded-xl p-3 backdrop-blur-[14px] shadow-xl w-[220px]">
                         <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#7fe3f0] uppercase tracking-[0.08em] mb-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#00e5ff] shadow-[0_0_6px_#00e5ff] animate-pulse-dot" />
                             Scatter Plot
                         </div>
-                        <svg className="w-full h-[110px]" viewBox="0 0 210 110">
-                            <line x1="8" y1="96" x2="200" y2="14" className="stroke-[#3b82f6] stroke-[1.4] opacity-80" />
-                            {Array.from({ length: 26 }, (_, i) => {
-                                const t = i / 25
-                                const x = 8 + t * 192 + (Math.random() * 16 - 8)
-                                const y = 96 - t * 82 + (Math.random() * 18 - 9)
+                        <svg className="w-full h-[140px]" viewBox="0 0 220 140">
+                            <line x1="10" y1="120" x2="210" y2="20" className="stroke-[#3b82f6] stroke-[1.4] opacity-80" />
+                            {Array.from({ length: 36 }, (_, i) => {
+                                const t = i / 35
+                                const x = 10 + t * 200 + (Math.random() * 16 - 8)
+                                const y = 120 - t * 100 + (Math.random() * 18 - 9)
                                 return (
                                     <circle
                                         key={i}
                                         cx={x}
                                         cy={y}
-                                        r="2.6"
+                                        r="3"
                                         fill={i % 3 === 0 ? '#8b5cf6' : '#00e5ff'}
                                         opacity="0.85"
                                         className="animate-dot-float"
@@ -575,7 +575,7 @@ export default function DataFlowHero() {
                     </div>
                 </div>
 
-                {/* Code Panel */}
+                {/* Code Panel - model.py visible */}
                 <div className="absolute top-[420px] right-[24px] z-10 pointer-events-none animate-float-slow" style={{ animationDelay: '1.9s' }}>
                     <div className="bg-[rgba(10,14,26,0.82)] border border-[rgba(255,255,255,0.09)] rounded-xl p-3 backdrop-blur-[14px] shadow-xl w-[250px] font-mono text-[10.5px] leading-[1.65] overflow-hidden relative">
                         <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#7fe3f0] uppercase tracking-[0.08em] mb-2 font-sans">
@@ -594,25 +594,27 @@ export default function DataFlowHero() {
                     </div>
                 </div>
 
-                {/* Software Badges */}
+                {/* Software Badges replaced with software names */}
                 <div className="absolute top-[404px] left-[24px] z-10 pointer-events-none animate-float-slow" style={{ animationDelay: '0.6s' }}>
-                    <div className="grid grid-cols-4 gap-2 w-[240px]">
+                    <div className="grid grid-cols-4 gap-1.5 w-[260px]">
                         {[
                             ['R', '#e5e7eb'],
-                            ['Py', '#00e5ff'],
+                            ['Python', '#00e5ff'],
                             ['SPSS', '#ec4899'],
                             ['Stata', '#f59e0b'],
                             ['PLS', '#8b5cf6'],
-                            ['✚', '#22c55e'],
-                            ['▤', '#3b82f6'],
-                            ['◍', '#00e5ff'],
-                            ['Q', '#8b5cf6'],
-                            ['SQL', '#3b82f6']
+                            ['AMOS', '#22c55e'],
+                            ['NVivo', '#3b82f6'],
+                            ['Power BI', '#00e5ff'],
+                            ['QGIS', '#8b5cf6'],
+                            ['SQL', '#3b82f6'],
+                            ['Excel', '#22c55e'],
+                            ['SAS', '#f59e0b']
                         ].map(([label, color], i) => (
                             <div
                                 key={i}
-                                className="aspect-square rounded-[10px] bg-[rgba(10,14,26,0.82)] border border-[rgba(255,255,255,0.09)] flex items-center justify-center text-[10.5px] font-bold tracking-[0.02em] backdrop-blur-[10px] animate-badge-bob"
-                                style={{ color, animationDelay: `${i * 0.25}s` }}
+                                className="rounded-[10px] bg-[rgba(10,14,26,0.82)] border border-[rgba(255,255,255,0.09)] flex items-center justify-center text-[9.5px] font-bold tracking-[0.02em] backdrop-blur-[10px] animate-badge-bob px-2 py-1.5 whitespace-nowrap"
+                                style={{ color, animationDelay: `${i * 0.18}s` }}
                             >
                                 {label}
                             </div>
@@ -674,21 +676,25 @@ export default function DataFlowHero() {
                             Expert statistical consulting and research support for academic,
                             corporate, and organizational success
                         </motion.p>
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 }}
-                            className="mt-8 pointer-events-auto"
+                    </motion.div>
+                </div>
+
+                {/* Start Project Button - moved to bottom after graphs */}
+                <div className="absolute bottom-[18px] left-0 right-0 z-20 flex justify-center pointer-events-none">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8 }}
+                        className="pointer-events-auto"
+                    >
+                        <motion.a
+                            href="tel:+255717275661"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
                         >
-                            <motion.a
-                                href="tel:+255717275661"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-                            >
-                                Start Your Project with us + (255) 717 275 661
-                            </motion.a>
-                        </motion.div>
+                            Start Your Project with us + (255) 717 275 661
+                        </motion.a>
                     </motion.div>
                 </div>
             </div>
