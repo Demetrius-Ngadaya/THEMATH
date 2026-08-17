@@ -2,10 +2,11 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/api';
+// Remove /api from the base URL since Laravel already adds it
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com';
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE_URL,  // No /api here
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -25,7 +26,7 @@ api.interceptors.request.use(async (config) => {
 
 export const fetchCsrfCookie = async () => {
     try {
-        await axios.get('https://backendapi.emcc-lab.com//sanctum/csrf-cookie', {
+        await axios.get('https://backendapi.emcc-lab.com/sanctum/csrf-cookie', {  // Removed // from URL
             withCredentials: true,
         });
         console.log('CSRF cookie fetched');
