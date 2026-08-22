@@ -56,7 +56,7 @@ export default function AdminHeroSlidersPage() {
                 is_active: slider.is_active,
                 sort_order: slider.sort_order || 0
             })
-            setImagePreview(slider.image || "")
+            setImagePreview(slider.image_url || "")
         } else {
             setEditingSlider(null)
             setFormData({
@@ -184,8 +184,8 @@ export default function AdminHeroSlidersPage() {
                         {filteredSliders.map((slider) => (
                             <TableRow key={slider.id}>
                                 <TableCell>
-                                    {slider.image ? (
-                                        <Image src={slider.image} alt={slider.title} width={60} height={40} className="rounded-lg object-cover" />
+                                    {slider.image_url ? (
+                                        <Image src={slider.image_url} alt={slider.title} width={60} height={40} className="rounded-lg object-cover" />
                                     ) : (
                                         <div className="w-15 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-xs text-gray-500">No image</div>
                                     )}
