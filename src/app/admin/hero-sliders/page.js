@@ -35,11 +35,8 @@ export default function AdminHeroSlidersPage() {
     const fetchSliders = async () => {
         try {
             setIsLoading(true)
-            // Using the general hero-sliders endpoint
-            const response = await axios.get('/hero-sliders')
-            if (response.data.success) {
-                setSliders(response.data.data)
-            }
+            const response = await axios.get('/admin/hero-sliders')
+            setSliders(Array.isArray(response.data) ? response.data : [])
         } catch (error) {
             console.error('Error fetching sliders:', error)
             toast.error('Failed to load sliders')
