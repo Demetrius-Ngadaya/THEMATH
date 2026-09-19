@@ -12,6 +12,9 @@ import Cookies from "js-cookie"
 import { API } from "@/services/api"
 import { logout } from "@/store/authSlice"
 import { clearCart } from "@/store/cartSlice"
+import { fetchWishlist } from "@/store/wishlistSlice"
+import { useLanguage } from "@/contexts/LanguageContext"
+import LanguageSwitcher from "./LanguageSwitcher"
 import MegaMenu from "./MegaMenu"
 import SearchBar from "./SearchBar"
 
@@ -23,6 +26,7 @@ export default function Navbar() {
     const [user, setUser] = useState(null)
     const [mounted, setMounted] = useState(false)
     const { theme, setTheme } = useTheme()
+    const { t } = useLanguage()
     const pathname = usePathname()
     const router = useRouter()
     const dispatch = useDispatch()
@@ -40,6 +44,11 @@ export default function Navbar() {
         setIsAuthenticated(!!token)
         if (userData) {
             setUser(JSON.parse(userData))
+        }
+        // Wishlist now lives in the database, not localStorage - load it
+        // once we know whether the visitor is logged in.
+        if (token) {
+            dispatch(fetchWishlist())
         }
     }, [])
 
@@ -72,13 +81,14 @@ export default function Navbar() {
     }
 
     const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/products", label: "Products" },
-        { href: "/services2", label: "Services" },
-        { href: "/research", label: "Researches" },
-        { href: "/deals", label: "Deals" },
-        { href: "/about", label: "About" },
-        { href: "/contact", label: "Contact" },
+        { href: "/", label: t("nav.home") },
+        { href: "/products", label: t("nav.products") },
+        { href: "/services2", label: t("nav.services") },
+        { href: "/research", label: t("nav.research") },
+        { href: "/deals", label: t("nav.deals") },
+        { href: "/about", label: t("nav.about") },
+        { href: "/contact", label: t("nav.contact") },
+        { href: "/faqs", label: t("nav.faqs") },
     ]
 
     return (
@@ -121,10 +131,13 @@ export default function Navbar() {
                             <button
                                 onClick={() => setShowSearch(!showSearch)}
                                 className="rounded-full p-1 sm:p-1.5 lg:p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors hidden xs:inline-flex"
-                                aria-label="Search"
+                                aria-label={t("common.search")}
                             >
                                 <HiOutlineSearch className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
                             </button>
+
+                            {/* Language Switcher - Hide on very small screens, show on sm and above */}
+                            <LanguageSwitcher className="hidden sm:flex" />
 
                             {/* Theme Toggle - Hide on very small screens, show on sm and above */}
                             <button
@@ -133,8 +146,14 @@ export default function Navbar() {
                                 aria-label="Toggle theme"
                             >
                                 <AnimatePresence mode="wait" initial={false}>
-                                    <motion.div key={theme} initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ duration: 0.2 }}>
-                                        {theme === "dark" ? <HiOutlineSun className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" /> : <HiOutlineMoon className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />}
+                                    <motion.div key={mounted ? theme : "placeholder"} initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ duration: 0.2 }}>
+                                        {!mounted ? (
+                                            <span className="block h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                                        ) : theme === "dark" ? (
+                                            <HiOutlineSun className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                                        ) : (
+                                            <HiOutlineMoon className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                                        )}
                                     </motion.div>
                                 </AnimatePresence>
                             </button>
@@ -170,15 +189,15 @@ export default function Navbar() {
                                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                         <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-t-lg">
                                             <HiOutlineClipboardList className="h-5 w-5" />
-                                            My Orders
+                                            {t("nav.orders")}
                                         </Link>
                                         <Link href="/wishlist" className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                                             <HiOutlineHeart className="h-5 w-5" />
-                                            Wishlist
+                                            {t("nav.wishlist")}
                                         </Link>
                                         <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-b-lg w-full">
                                             <HiOutlineLogout className="h-5 w-5" />
-                                            Logout
+                                            {t("nav.logout")}
                                         </button>
                                     </div>
                                 </div>
@@ -261,7 +280,7 @@ export default function Navbar() {
                                             className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-xs sm:text-sm md:text-base"
                                         >
                                             <HiOutlineUser className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
-                                            <span className="font-medium">Sign In / Register</span>
+                                            <span className="font-medium">{t("common.signInRegister")}</span>
                                         </Link>
                                     )}
                                 </div>
@@ -292,6 +311,11 @@ export default function Navbar() {
 
                                 {/* Bottom Actions */}
                                 <div className="border-t border-gray-200 dark:border-gray-700 p-2 sm:p-3 md:p-4 space-y-1 sm:space-y-1.5 md:space-y-2">
+                                    {/* Language switcher in mobile menu */}
+                                    <div className="flex justify-center pb-1 sm:pb-2">
+                                        <LanguageSwitcher />
+                                    </div>
+
                                     {isAuthenticated && (
                                         <>
                                             <Link
@@ -300,7 +324,7 @@ export default function Navbar() {
                                                 className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs sm:text-sm md:text-base"
                                             >
                                                 <HiOutlineClipboardList className="h-4 w-4 sm:h-5 sm:w-5" />
-                                                <span className="font-medium">My Orders</span>
+                                                <span className="font-medium">{t("nav.orders")}</span>
                                             </Link>
                                             <Link
                                                 href="/wishlist"
@@ -308,7 +332,7 @@ export default function Navbar() {
                                                 className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs sm:text-sm md:text-base"
                                             >
                                                 <HiOutlineHeart className="h-4 w-4 sm:h-5 sm:w-5" />
-                                                <span className="font-medium">Wishlist</span>
+                                                <span className="font-medium">{t("nav.wishlist")}</span>
                                                 {wishlistItems.length > 0 && (
                                                     <span className="ml-auto bg-red-500 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                                                         {wishlistItems.length}
@@ -324,7 +348,7 @@ export default function Navbar() {
                                             className="flex w-full items-center gap-2 sm:gap-3 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-xs sm:text-sm md:text-base"
                                         >
                                             <HiOutlineLogout className="h-4 w-4 sm:h-5 sm:w-5" />
-                                            <span className="font-medium">Logout</span>
+                                            <span className="font-medium">{t("nav.logout")}</span>
                                         </button>
                                     ) : (
                                         <div className="flex flex-col gap-1 sm:gap-2">
@@ -333,7 +357,7 @@ export default function Navbar() {
                                                 onClick={() => setIsOpen(false)}
                                                 className="flex items-center justify-center px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium text-xs sm:text-sm md:text-base"
                                             >
-                                                Create Account
+                                                {t("auth.createAccount")}
                                             </Link>
                                         </div>
                                     )}
@@ -343,8 +367,14 @@ export default function Navbar() {
                                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                                         className="flex w-full items-center gap-2 sm:gap-3 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs sm:text-sm md:text-base"
                                     >
-                                        {theme === "dark" ? <HiOutlineSun className="h-4 w-4 sm:h-5 sm:w-5" /> : <HiOutlineMoon className="h-4 w-4 sm:h-5 sm:w-5" />}
-                                        <span className="font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                                        {!mounted ? (
+                                            <span className="block h-4 w-4 sm:h-5 sm:w-5" />
+                                        ) : theme === "dark" ? (
+                                            <HiOutlineSun className="h-4 w-4 sm:h-5 sm:w-5" />
+                                        ) : (
+                                            <HiOutlineMoon className="h-4 w-4 sm:h-5 sm:w-5" />
+                                        )}
+                                        <span className="font-medium">{mounted && theme === "dark" ? t("common.lightMode") : t("common.darkMode")}</span>
                                     </button>
                                 </div>
                             </div>

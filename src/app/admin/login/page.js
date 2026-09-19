@@ -1,6 +1,7 @@
 // src/app/admin/login/page.js
 "use client"
 
+import { API_BASE_URL } from "@/utils/apiConfig"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -20,7 +21,7 @@ export default function AdminLogin() {
         setError('')
 
         try {
-            const response = await axios.post('https://backendapi.emcc-lab.com/api/admin/login', {
+            const response = await axios.post(`${API_BASE_URL}/admin/login`, {
                 email, password
             })
 
@@ -70,7 +71,12 @@ export default function AdminLogin() {
                     </div>
 
                     <div>
-                        <label className="block text-gray-700 mb-2">Password</label>
+                        <div className="flex items-center justify-between mb-2">
+                            <label className="block text-gray-700">Password</label>
+                            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                                Forgot password?
+                            </Link>
+                        </div>
                         <input
                             type="password"
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

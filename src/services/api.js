@@ -1,8 +1,7 @@
 // services/api.js
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/api';
+import { API_BASE_URL, SITE_ROOT_URL } from '@/utils/apiConfig';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -25,7 +24,7 @@ api.interceptors.request.use(async (config) => {
 
 export const fetchCsrfCookie = async () => {
     try {
-        await axios.get('https://backendapi.emcc-lab.com//sanctum/csrf-cookie', {
+        await axios.get(`${SITE_ROOT_URL}/sanctum/csrf-cookie`, {
             withCredentials: true,
         });
         console.log('CSRF cookie fetched');
@@ -103,6 +102,14 @@ export const API = {
 
     // Payments
     initiatePayment: (data) => api.post('/payments/mno', data),
+
+    // ===== SERVICES ENDPOINTS =====
+    // Services
+    getServices: (params) => api.get('/services', { params }),
+    getService: (id) => api.get(`/services/${id}`),
+    createService: (data) => api.post('/services', data),
+    updateService: (id, data) => api.put(`/services/${id}`, data),
+    deleteService: (id) => api.delete(`/services/${id}`),
 };
 
 export default API;

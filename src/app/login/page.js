@@ -10,6 +10,7 @@ import Cookies from "js-cookie"
 import { useDispatch } from "react-redux"
 import { setUser } from "@/store/authSlice"
 import { addToCart } from "@/store/cartSlice"
+import { fetchWishlist } from "@/store/wishlistSlice"
 import { FiMail, FiLock, FiAlertCircle, FiLogIn } from "react-icons/fi"
 import { motion } from "framer-motion"
 
@@ -32,6 +33,7 @@ export default function Login() {
             Cookies.set('user', JSON.stringify(user), { expires: 7 })
 
             dispatch(setUser(user))
+            dispatch(fetchWishlist())
 
             // Check for intended product or redirect URL
             const intendedProduct = localStorage.getItem('intendedProduct')
@@ -136,9 +138,14 @@ export default function Login() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Password
-                                </label>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Password
+                                    </label>
+                                    <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                                        Forgot password?
+                                    </Link>
+                                </div>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <FiLock className="h-5 w-5 text-gray-400" />

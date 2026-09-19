@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react"
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSearch } from "react-icons/fi"
 import API, { axiosInstance } from "@/services/api"
+import { getImageUrl } from "@/utils/imageHelper"
 import { toast } from "react-hot-toast"
 
 export default function AdminStemProductsPage() {
@@ -215,12 +216,7 @@ export default function AdminStemProductsPage() {
     const iconOptions = ["FaRocket", "FaGraduationCap", "FaBriefcase", "FaCog", "FaChartBar", "FaLightbulb", "FaUsers", "FaGlobe"]
     const colorOptions = ["blue", "green", "purple", "red", "yellow", "indigo", "gray", "pink"]
 
-    // Helper function to get image URL
-    const getImageUrl = (path) => {
-        if (!path) return null
-        if (path.startsWith('http')) return path
-        return `https://backendapi.emcc-lab.com${path}`
-    }
+    // (image URL helper now imported from @/utils/imageHelper)
 
     return (
         <div className="p-6">

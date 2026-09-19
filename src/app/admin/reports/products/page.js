@@ -1,6 +1,7 @@
 // app/admin/reports/products/page.js
 "use client"
 
+import { API_BASE_URL } from "@/utils/apiConfig"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
@@ -64,7 +65,7 @@ export default function ProductReports() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/products', {
+            const response = await axios.get(`${API_BASE_URL}/admin/products`, {
                 params: {
                     page,
                     per_page: perPage,
@@ -105,7 +106,7 @@ export default function ProductReports() {
     const fetchCategories = async () => {
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/categories', {
+            const response = await axios.get(`${API_BASE_URL}/admin/categories`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setCategories(response.data.data || response.data || [])

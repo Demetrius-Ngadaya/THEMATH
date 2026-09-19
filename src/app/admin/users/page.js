@@ -1,6 +1,7 @@
 // app/admin/users/page.js
 "use client"
 
+import { API_BASE_URL } from "@/utils/apiConfig"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
@@ -81,7 +82,7 @@ export default function AdminUsers() {
                 return
             }
 
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/users', {
+            const response = await axios.get(`${API_BASE_URL}/admin/users`, {
                 params: {
                     search: search || undefined,
                     page: page,
@@ -133,7 +134,7 @@ export default function AdminUsers() {
             }
 
             if (editingUser) {
-                await axios.put(`https://backendapi.emcc-lab.com/api/admin/users/${editingUser.id}`,
+                await axios.put(`${API_BASE_URL}/admin/users/${editingUser.id}`,
                     updateData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
@@ -156,7 +157,7 @@ export default function AdminUsers() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/users/${userId}`, {
+                await axios.delete(`${API_BASE_URL}/admin/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'User deleted successfully')

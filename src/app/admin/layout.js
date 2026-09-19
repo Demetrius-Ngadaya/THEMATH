@@ -5,12 +5,15 @@ import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import Cookies from "js-cookie"
+import axios from "axios"
+import { API_BASE_URL } from "@/utils/apiConfig"
 import {
-    FiHome, FiPackage, FiFileText, FiShoppingBag, FiUsers, FiTag, FiLogOut,
-    FiBarChart2, FiMenu, FiChevronLeft, FiChevronRight,
+    FiHome, FiPackage, FiFileText, FiShoppingBag, FiUsers, FiTag, FiLogOut, FiPercent, FiStar, FiGift,
+    FiBarChart2, FiMenu, FiChevronLeft, FiChevronRight, FiTrendingUp,
     FiBell, FiSettings, FiHelpCircle, FiSearch,
     FiUser, FiMail, FiPhone,
-    FiUserCheck, FiImage, FiSun, FiMoon
+    FiUserCheck, FiImage, FiSun, FiMoon, FiMessageSquare,
+    FiUserPlus, FiActivity, FiDownload
 } from "react-icons/fi"
 import {
     Avatar,
@@ -26,6 +29,19 @@ import {
     Button
 } from "@nextui-org/react"
 import { motion, AnimatePresence } from "framer-motion"
+
+// Paths only a full admin (not staff) can access - both the sidebar and
+// the routes themselves enforce this; hiding these here is just so staff
+// aren't shown links that would 403 if clicked.
+const SUPER_ADMIN_ONLY_PATHS = [
+    "/admin/users",
+    "/admin/settings",
+    "/admin/coupons",
+    "/admin/subscribers",
+    "/admin/analytics",
+    "/admin/staff",
+    "/admin/audit-log",
+]
 
 export default function AdminLayout({ children }) {
     const router = useRouter()
@@ -73,7 +89,29 @@ export default function AdminLayout({ children }) {
             setAdminUser(JSON.parse(user))
         }
 
-        setIsLoading(false)
+        // Verify the token is still valid (and still belongs to an admin)
+        // against the server, rather than just trusting that the cookie
+        // exists. This is what makes an expired/revoked session cleanly
+        // redirect to /admin/login instead of showing a broken admin
+        // shell that fails every data request.
+        axios
+            .get(`${API_BASE_URL}/admin/me`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((response) => {
+                setAdminUser(response.data)
+                Cookies.set('admin_user', JSON.stringify(response.data), { expires: 7, path: '/' })
+            })
+            .catch((error) => {
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    Cookies.remove('admin_token')
+                    Cookies.remove('admin_user')
+                    router.push('/admin/login')
+                }
+                // Any other error (e.g. network blip) - don't log the
+                // admin out over a transient failure.
+            })
+            .finally(() => setIsLoading(false))
 
         // Handle window resize
         const handleResize = () => {
@@ -150,8 +188,27 @@ export default function AdminLayout({ children }) {
         { href: "/admin/team-members", label: "Team Members", icon: FiUserCheck, color: "pink" },
         { href: "/admin/hero-sliders", label: "Hero Sliders", icon: FiImage, color: "yellow" },
         { href: "/admin/categories", label: "Categories", icon: FiTag, color: "pink" },
+        { href: "/admin/deals", label: "Flash Deals", icon: FiPercent, color: "red" },
+        { href: "/admin/coupons", label: "Coupons", icon: FiGift, color: "purple" },
+        { href: "/admin/reviews", label: "Reviews", icon: FiStar, color: "yellow" },
+        { href: "/admin/subscribers", label: "Subscribers", icon: FiMail, color: "cyan" },
+        { href: "/admin/analytics", label: "Analytics", icon: FiTrendingUp, color: "green" },
+        { href: "/admin/exports", label: "Exports", icon: FiDownload, color: "teal" },
+        { href: "/admin/faqs", label: "FAQs", icon: FiHelpCircle, color: "blue" },
+        { href: "/admin/chat", label: "Chat Conversations", icon: FiMessageSquare, color: "green" },
+        { href: "/admin/staff", label: "Staff", icon: FiUserPlus, color: "indigo" },
+        { href: "/admin/audit-log", label: "Activity Log", icon: FiActivity, color: "gray" },
+        { href: "/admin/settings", label: "Site Settings", icon: FiSettings, color: "gray" },
         { href: "/admin/reports", label: "Reports", icon: FiBarChart2, color: "red" },
     ]
+
+    // Staff accounts don't see (or get tempted to click into) the
+    // full-admin-only pages - the backend enforces this independently
+    // either way, this is just so the sidebar matches what they can
+    // actually do.
+    const visibleNavItems = adminUser?.role === 'staff'
+        ? navItems.filter(item => !SUPER_ADMIN_ONLY_PATHS.includes(item.href))
+        : navItems
 
     const unreadCount = notifications.filter(n => !n.read).length
 
@@ -233,7 +290,7 @@ export default function AdminLayout({ children }) {
                     {/* Navigation Items - No Descriptions */}
                     <div className="flex-1 overflow-y-auto py-6 custom-scrollbar">
                         <div className="px-3 space-y-1">
-                            {navItems.map((item) => {
+                            {visibleNavItems.map((item) => {
                                 const isActive = pathname === item.href
                                 const Icon = item.icon
 

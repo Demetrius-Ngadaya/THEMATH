@@ -1,0 +1,598 @@
+// app/page.js
+"use client"
+
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
+import { API_BASE_URL } from "@/utils/apiConfig"
+import { HiOutlineShoppingBag, HiOutlineStar, HiOutlineTruck, HiOutlineShieldCheck } from "react-icons/hi"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import ProductGrid from "@/components/ProductGrid"
+import { SkeletonHero, SkeletonCardGrid, SkeletonBlock, SkeletonCircleCard } from "@/components/Skeleton"
+import { PublicAPI } from "@/services/publicApi"
+import { API } from "@/services/api"
+import { getImageUrl } from "@/utils/imageHelper"
+import { showSuccess, showError } from "@/utils/sweetalert"
+import Cookies from "js-cookie"
+import axios from "axios"
+import { useDispatch, useSelector } from "react-redux"
+import { addToWishlist, removeFromWishlist } from "@/store/wishlistSlice"
+import { HiHeart, HiOutlineHeart } from "react-icons/hi"
+import { useLanguage } from "@/contexts/LanguageContext"
+
+export default function HomeContent() {
+  const [featuredProducts, setFeaturedProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [heroSliders, setHeroSliders] = useState([])
+  const [teamMembers, setTeamMembers] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [addingToCart, setAddingToCart] = useState(null)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [nextSlide, setNextSlide] = useState(1)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const wishlistItems = useSelector((state) => state.wishlist?.items || [])
+  const { t } = useLanguage()
+
+  // Handle wishlist toggle (stops propagation so it doesn't also trigger
+  // the card's add-to-cart click)
+  const handleWishlistToggle = (e, product) => {
+    e.stopPropagation()
+    const token = Cookies.get('auth_token')
+
+    if (!token) {
+      localStorage.setItem('redirectAfterLogin', '/wishlist')
+      showError('Please Login', 'You need to login first to use your wishlist')
+      router.push('/login')
+      return
+    }
+
+    const isInWishlist = wishlistItems.some((item) => item.id === product.id)
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(product.id))
+      showSuccess('Removed', `${product.name} removed from wishlist`)
+    } else {
+      dispatch(addToWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0]?.path || '/placeholder.jpg'
+      }))
+      showSuccess('Added', `${product.name} added to wishlist`)
+    }
+  }
+
+  const features = [
+    { icon: HiOutlineTruck, title: t("home.featureDeliveryTitle"), description: t("home.featureDeliveryDesc") },
+    { icon: HiOutlineShieldCheck, title: t("home.featureSecureTitle"), description: t("home.featureSecureDesc") },
+    { icon: HiOutlineStar, title: t("home.featureQualityTitle"), description: t("home.featureQualityDesc") },
+    { icon: HiOutlineShoppingBag, title: t("home.featureReturnsTitle"), description: t("home.featureReturnsDesc") },
+  ]
+
+  // Handle product click - add to cart and redirect to cart
+  const handleProductClick = async (product) => {
+    const token = Cookies.get('auth_token')
+
+    if (!token) {
+      localStorage.setItem('intendedProduct', JSON.stringify({
+        id: product.id,
+        quantity: 1,
+        name: product.name,
+        price: product.price
+      }))
+      localStorage.setItem('redirectAfterLogin', '/cart')
+      showError('Please Login', 'You need to login first to add items to cart')
+      router.push('/login')
+      return
+    }
+
+    setAddingToCart(product.id)
+    try {
+      await API.addToCart({
+        product_id: product.id,
+        quantity: 1
+      })
+      showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+      router.push('/cart')
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+      showError('Error', error.response?.data?.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(null)
+    }
+  }
+
+  // Handle add to cart button click (stops propagation)
+  const handleAddToCartClick = async (e, product) => {
+    e.stopPropagation()
+    const token = Cookies.get('auth_token')
+
+    if (!token) {
+      localStorage.setItem('intendedProduct', JSON.stringify({
+        id: product.id,
+        quantity: 1,
+        name: product.name,
+        price: product.price
+      }))
+      localStorage.setItem('redirectAfterLogin', '/cart')
+      showError('Please Login', 'You need to login first to add items to cart')
+      router.push('/login')
+      return
+    }
+
+    setAddingToCart(product.id)
+    try {
+      await API.addToCart({
+        product_id: product.id,
+        quantity: 1
+      })
+      showSuccess('Added to Cart', `${product.name} has been added to your cart`)
+      router.push('/cart')
+    } catch (error) {
+      console.error("Error adding to cart:", error)
+      showError('Error', error.response?.data?.message || 'Failed to add to cart')
+    } finally {
+      setAddingToCart(null)
+    }
+  }
+
+  // Fetch all dynamic data - run in parallel instead of one-at-a-time,
+  // and each section renders its own skeleton independently rather than
+  // blocking the whole page behind a single spinner.
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setIsLoading(true)
+      try {
+        const [slidersResponse, teamResponse, productsResponse, categoriesResponse] = await Promise.all([
+          axios.get(`${API_BASE_URL}/hero-sliders`),
+          axios.get(`${API_BASE_URL}/team-members`),
+          PublicAPI.getProducts({ page: 1 }),
+          PublicAPI.getCategories(),
+        ])
+
+        setHeroSliders(slidersResponse.data)
+        setTeamMembers(teamResponse.data)
+
+        let products = []
+        if (productsResponse.data.data) {
+          products = productsResponse.data.data
+        } else if (Array.isArray(productsResponse.data)) {
+          products = productsResponse.data
+        }
+        setFeaturedProducts(products.slice(0, 8))
+
+        let categoriesData = []
+        if (categoriesResponse.data.data) {
+          categoriesData = categoriesResponse.data.data
+        } else if (Array.isArray(categoriesResponse.data)) {
+          categoriesData = categoriesResponse.data
+        }
+        setCategories(categoriesData)
+
+      } catch (error) {
+        console.error("Error fetching data:", error)
+        setHeroSliders([])
+        setTeamMembers([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchAllData()
+  }, [])
+
+  // Crossfade transition effect for hero slider
+  useEffect(() => {
+    if (heroSliders.length === 0) return
+
+    const timer = setInterval(() => {
+      if (!isTransitioning) {
+        setIsTransitioning(true)
+        const next = (currentSlide + 1) % heroSliders.length
+        setNextSlide(next)
+
+        setTimeout(() => {
+          setCurrentSlide(next)
+          setIsTransitioning(false)
+        }, 1000)
+      }
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [currentSlide, isTransitioning, heroSliders.length])
+
+  const handlePrevSlide = () => {
+    if (isTransitioning || heroSliders.length === 0) return
+    setIsTransitioning(true)
+    const prev = (currentSlide - 1 + heroSliders.length) % heroSliders.length
+    setNextSlide(prev)
+
+    setTimeout(() => {
+      setCurrentSlide(prev)
+      setIsTransitioning(false)
+    }, 1000)
+  }
+
+  const handleNextSlide = () => {
+    if (isTransitioning || heroSliders.length === 0) return
+    setIsTransitioning(true)
+    const next = (currentSlide + 1) % heroSliders.length
+    setNextSlide(next)
+
+    setTimeout(() => {
+      setCurrentSlide(next)
+      setIsTransitioning(false)
+    }, 1000)
+  }
+
+  const goToSlide = (index) => {
+    if (isTransitioning || index === currentSlide || heroSliders.length === 0) return
+    setIsTransitioning(true)
+    setNextSlide(index)
+
+    setTimeout(() => {
+      setCurrentSlide(index)
+      setIsTransitioning(false)
+    }, 1000)
+  }
+
+  return (
+    <div className="space-y-16 pb-16">
+      {/* Hero Section with Dynamic Sliders */}
+      {isLoading && heroSliders.length === 0 ? (
+        <section className="relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <SkeletonHero />
+          </div>
+        </section>
+      ) : heroSliders.length > 0 && (
+        <section className="relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative w-full overflow-hidden rounded-3xl shadow-2xl">
+              <div className="relative w-full" style={{ aspectRatio: "16/9", maxHeight: "70vh" }}>
+                {/* Current Image */}
+                <div className="absolute inset-0">
+                  <Image
+                    src={getImageUrl(heroSliders[currentSlide]?.image)}
+                    alt={heroSliders[currentSlide]?.title || "Hero Slide"}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                    style={{ objectPosition: "center 30%" }}
+                  />
+                </div>
+
+                {/* Transitioning Image */}
+                {heroSliders[nextSlide] && (
+                  <div
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${isTransitioning ? "opacity-100" : "opacity-0 pointer-events-none"
+                      }`}
+                  >
+                    <Image
+                      src={getImageUrl(heroSliders[nextSlide].image)}
+                      alt={heroSliders[nextSlide].title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                      style={{ objectPosition: "center 30%" }}
+                    />
+                  </div>
+                )}
+
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent pointer-events-none" />
+
+                {/* Slide Content */}
+                <motion.div
+                  key={currentSlide}
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12 z-10"
+                >
+                  <div className="mx-auto max-w-4xl text-center">
+                    <p className="mt-2 text-base text-white/90 sm:text-lg lg:text-xl drop-shadow">
+                      {heroSliders[currentSlide]?.subtitle}
+                    </p>
+                    {heroSliders[currentSlide]?.button_text && (
+                      <Link
+                        href={heroSliders[currentSlide]?.button_link || "/products"}
+                        className="mt-6 inline-block rounded-full border border-white/60 bg-transparent px-6 py-2.5 text-sm font-semibold text-white shadow-lg backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/10 sm:px-8 sm:py-3 sm:text-base"
+                      >
+                        {heroSliders[currentSlide]?.button_text}
+                      </Link>
+                    )}
+                  </div>
+                </motion.div>
+
+                {/* Navigation Buttons */}
+                <button
+                  onClick={handlePrevSlide}
+                  disabled={isTransitioning}
+                  className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/50 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed sm:left-6 sm:p-3"
+                >
+                  <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                </button>
+                <button
+                  onClick={handleNextSlide}
+                  disabled={isTransitioning}
+                  className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/50 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed sm:right-6 sm:p-3"
+                >
+                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                </button>
+
+                {/* Dots Indicator */}
+                <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-6">
+                  {heroSliders.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      disabled={isTransitioning}
+                      className={`h-2 rounded-full transition-all duration-300 ${currentSlide === index
+                        ? "w-8 bg-white sm:w-10"
+                        : "w-2 bg-white/50 hover:bg-white/80"
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Features Section */}
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 container mx-auto px-4 sm:px-6 lg:px-8">
+        {features.map((feature, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ scale: 1.05 }}
+            className="group rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-900 hover:shadow-xl transition-all"
+          >
+            <div className="mb-4 inline-block rounded-full bg-blue-100 p-3 text-blue-600 dark:bg-blue-900 dark:text-blue-300 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <feature.icon className="h-6 w-6" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+            <p className="text-gray-600 dark:text-gray-400">{feature.description}</p>
+          </motion.div>
+        ))}
+      </section>
+
+      {/* Featured Products - Custom Grid with Click Handlers */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("home.featuredProducts")}</h2>
+          <Link href="/products" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-semibold flex items-center gap-1 group">
+            {t("home.viewAll")}
+            <span className="group-hover:translate-x-1 transition-transform">→</span>
+          </Link>
+        </div>
+
+        {/* Custom Product Grid with click handlers */}
+        {isLoading ? (
+          <SkeletonCardGrid count={8} columns="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" />
+        ) : featuredProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">{t("home.noProductsFound")}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {featuredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className={`group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all cursor-pointer ${addingToCart === product.id ? 'opacity-50 pointer-events-none' : ''
+                  }`}
+                onClick={() => handleProductClick(product)}
+              >
+                {/* Loading Overlay */}
+                {addingToCart === product.id && (
+                  <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center rounded-2xl">
+                    <div className="bg-white rounded-lg p-4 flex flex-col items-center gap-2">
+                      <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span className="text-sm font-semibold">{t("home.addingToCart")}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-800">
+                  {product.images?.[0] ? (
+                    <img
+                      src={getImageUrl(product.images[0].path)}
+                      alt={product.name}
+                      className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.src = '/placeholder.jpg'
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      {t("home.noImage")}
+                    </div>
+                  )}
+
+                  {/* Wishlist toggle */}
+                  <button
+                    onClick={(e) => handleWishlistToggle(e, product)}
+                    className="absolute right-2 top-2 rounded-full bg-white p-2 shadow-lg dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
+                  >
+                    {wishlistItems.some((item) => item.id === product.id) ? (
+                      <HiHeart className="h-5 w-5 text-red-500" />
+                    ) : (
+                      <HiOutlineHeart className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                    {product.name}
+                  </h3>
+
+                  {/* Price */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-xl font-bold text-red-600 dark:text-red-400">
+                      TSh {product.price?.toLocaleString()}
+                    </span>
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={(e) => handleAddToCartClick(e, product)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    disabled={addingToCart === product.id}
+                  >
+                    <HiOutlineShoppingBag className="h-5 w-5" />
+                    {t("common.addToCart")}
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Categories Grid */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">{t("home.shopByCategory")}</h2>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-3">
+                <SkeletonBlock className="aspect-square rounded-2xl" />
+                <SkeletonBlock className="h-4 w-2/3 mx-auto" />
+              </div>
+            ))
+          ) : categories.length > 0 ? (
+            categories.map((category, index) => (
+              <Link key={category.id} href={`/products?category_id=${category.id}`}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="group cursor-pointer"
+                >
+                  <div className="mb-3 aspect-square overflow-hidden rounded-2xl bg-gray-200 dark:bg-gray-800">
+                    {category.image ? (
+                      <img
+                        src={getImageUrl(category.image)}
+                        alt={category.name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-gradient-to-br from-blue-400 to-purple-400 opacity-75 group-hover:opacity-100 transition-opacity" />
+                    )}
+                  </div>
+                  <h3 className="text-center font-medium text-gray-900 dark:text-white">{category.name}</h3>
+                </motion.div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full text-center text-gray-500">{t("home.noCategoriesFound")}</div>
+          )}
+        </div>
+      </section>
+
+      {/* Meet Our Team Section - Dynamic */}
+      {isLoading && teamMembers.length === 0 ? (
+        <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 py-6 dark:from-gray-900 dark:to-gray-800 sm:py-6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonCircleCard key={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : teamMembers.length > 0 && (
+        <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 py-6 dark:from-gray-900 dark:to-gray-800 sm:py-6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-12 text-center"
+            >
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">{t("home.meetOurTeam")}</h2>
+              <p className="mx-auto mt-4 max-w-2xl text-gray-600 dark:text-gray-400">
+                {t("home.teamSubtitle")}
+              </p>
+              <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+            </motion.div>
+
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              {teamMembers.map((member, index) => (
+                <motion.div
+                  key={member.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className="group relative flex flex-col items-center rounded-3xl bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-2xl dark:bg-gray-800"
+                >
+                  <div className="relative mb-4 h-40 w-40 overflow-hidden rounded-full border-4 border-blue-500 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:border-purple-500">
+                    <img
+                      src={getImageUrl(member.image)}
+                      alt={member.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  </div>
+
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{member.name}</h3>
+                    <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">{member.role}</p>
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">{member.bio}</p>
+
+                    {(member.facebook_url || member.twitter_url || member.linkedin_url) && (
+                      <div className="mt-4 flex items-center justify-center gap-3">
+                        {member.facebook_url && (
+                          <a href={member.facebook_url} target="_blank" rel="noopener noreferrer"
+                            className="rounded-full bg-gray-100 p-2 text-gray-600 transition-all hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-400">
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
+                            </svg>
+                          </a>
+                        )}
+                        {member.twitter_url && (
+                          <a href={member.twitter_url} target="_blank" rel="noopener noreferrer"
+                            className="rounded-full bg-gray-100 p-2 text-gray-600 transition-all hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-400">
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                            </svg>
+                          </a>
+                        )}
+                        {member.linkedin_url && (
+                          <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer"
+                            className="rounded-full bg-gray-100 p-2 text-gray-600 transition-all hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-400">
+                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  )
+}

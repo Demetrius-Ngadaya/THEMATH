@@ -11,6 +11,7 @@ import { Input, Select, SelectItem, Button, Card, CardBody, Spinner, Chip } from
 import { FiSearch, FiX, FiFilter } from "react-icons/fi"
 import { showSuccess, showError } from "@/utils/sweetalert"
 import Cookies from "js-cookie"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Inner component that uses useSearchParams
 function ProductsContentInner() {
@@ -22,6 +23,7 @@ function ProductsContentInner() {
     const [selectedCategory, setSelectedCategory] = useState("")
     const [showFilters, setShowFilters] = useState(false)
     const [addingToCart, setAddingToCart] = useState(null)
+    const { t } = useLanguage()
 
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -173,7 +175,7 @@ function ProductsContentInner() {
     }
 
     const categoriesList = [
-        { id: "", name: "All Categories" },
+        { id: "", name: t("products.allCategories") },
         ...(Array.isArray(categories) ? categories.map(cat => ({ id: cat.id, name: cat.name })) : [])
     ]
 
@@ -181,9 +183,9 @@ function ProductsContentInner() {
         <div className="min-h-screen bg-gray-50">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
                 <div className="container mx-auto px-4">
-                    <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">Our Products</h1>
+                    <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">{t("products.title")}</h1>
                     <p className="text-center text-blue-100 max-w-2xl mx-auto">
-                        Discover our collection of quality products at competitive prices
+                        {t("products.subtitle")}
                     </p>
                 </div>
             </div>
@@ -197,12 +199,12 @@ function ProductsContentInner() {
                                 <CardBody className="p-6">
                                     <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
                                         <FiFilter className="h-5 w-5" />
-                                        Filters
+                                        {t("products.filters")}
                                     </h3>
                                     <div className="mb-6">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t("products.searchProducts")}</label>
                                         <Input
-                                            placeholder="Search by name..."
+                                            placeholder={t("products.searchPlaceholder")}
                                             value={searchInput}
                                             onChange={(e) => setSearchInput(e.target.value)}
                                             onKeyDown={handleKeyPress}
@@ -216,11 +218,11 @@ function ProductsContentInner() {
                                         />
                                     </div>
                                     <div className="mb-6">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t("product.category")}</label>
                                         <Select
                                             selectedKeys={selectedCategory ? [selectedCategory] : []}
                                             onChange={(e) => setSelectedCategory(e.target.value)}
-                                            placeholder="Select category"
+                                            placeholder={t("products.selectCategory")}
                                             className="w-full"
                                         >
                                             {categoriesList.map((category) => (
@@ -232,11 +234,11 @@ function ProductsContentInner() {
                                     </div>
                                     <div className="space-y-2">
                                         <Button color="primary" className="w-full" startContent={<FiSearch />} onPress={handleSearch}>
-                                            Search
+                                            {t("common.search")}
                                         </Button>
                                         {(searchInput || selectedCategory) && (
                                             <Button variant="light" className="w-full" onPress={handleClearFilters}>
-                                                Clear Filters
+                                                {t("products.clearFilters")}
                                             </Button>
                                         )}
                                     </div>
@@ -248,7 +250,7 @@ function ProductsContentInner() {
                     {/* Mobile Filter Toggle */}
                     <div className="lg:hidden mb-4">
                         <Button color="primary" variant="flat" startContent={<FiFilter />} onPress={() => setShowFilters(!showFilters)} className="w-full">
-                            {showFilters ? "Hide Filters" : "Show Filters"}
+                            {showFilters ? t("products.hideFilters") : t("products.showFilters")}
                         </Button>
                     </div>
 
@@ -257,11 +259,11 @@ function ProductsContentInner() {
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="lg:hidden mb-6">
                             <Card>
                                 <CardBody className="p-6">
-                                    <h3 className="font-semibold text-lg mb-4">Filters</h3>
+                                    <h3 className="font-semibold text-lg mb-4">{t("products.filters")}</h3>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t("products.searchProducts")}</label>
                                         <Input
-                                            placeholder="Search by name..."
+                                            placeholder={t("products.searchPlaceholder")}
                                             value={searchInput}
                                             onChange={(e) => setSearchInput(e.target.value)}
                                             onKeyDown={handleKeyPress}
@@ -269,11 +271,11 @@ function ProductsContentInner() {
                                         />
                                     </div>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">{t("product.category")}</label>
                                         <Select
                                             selectedKeys={selectedCategory ? [selectedCategory] : []}
                                             onChange={(e) => setSelectedCategory(e.target.value)}
-                                            placeholder="Select category"
+                                            placeholder={t("products.selectCategory")}
                                         >
                                             {categoriesList.map((category) => (
                                                 <SelectItem key={category.id} value={category.id}>
@@ -283,9 +285,9 @@ function ProductsContentInner() {
                                         </Select>
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button color="primary" className="flex-1" onPress={handleSearch}>Apply</Button>
+                                        <Button color="primary" className="flex-1" onPress={handleSearch}>{t("products.apply")}</Button>
                                         {(searchInput || selectedCategory) && (
-                                            <Button variant="light" className="flex-1" onPress={handleClearFilters}>Clear</Button>
+                                            <Button variant="light" className="flex-1" onPress={handleClearFilters}>{t("products.clear")}</Button>
                                         )}
                                     </div>
                                 </CardBody>
@@ -299,16 +301,16 @@ function ProductsContentInner() {
                             <div>
                                 {!isLoading && products.length > 0 && (
                                     <p className="text-gray-600">
-                                        Showing {products.length} products
+                                        {t("products.showing")} {products.length} {t("nav.products")}
                                         {(searchQuery || selectedCategory) && (
-                                            <span className="text-gray-500 text-sm ml-2">(filtered)</span>
+                                            <span className="text-gray-500 text-sm ml-2">{t("products.filteredLabel")}</span>
                                         )}
                                     </p>
                                 )}
                             </div>
                             {(searchQuery || selectedCategory) && (
                                 <Button size="sm" variant="light" onPress={handleClearFilters} className="text-gray-500">
-                                    Clear all filters
+                                    {t("products.clearAllFilters")}
                                 </Button>
                             )}
                         </div>
@@ -317,12 +319,12 @@ function ProductsContentInner() {
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {searchQuery && (
                                     <Chip onClose={() => { setSearchInput(""); handleClearFilters() }} variant="flat" color="primary" size="sm">
-                                        Search: {searchQuery}
+                                        {t("products.searchLabel")} {searchQuery}
                                     </Chip>
                                 )}
                                 {selectedCategory && (
                                     <Chip onClose={() => { setSelectedCategory(""); handleClearFilters() }} variant="flat" color="primary" size="sm">
-                                        Category: {categories.find(c => c.id == selectedCategory)?.name || selectedCategory}
+                                        {t("products.categoryLabel")} {categories.find(c => c.id == selectedCategory)?.name || selectedCategory}
                                     </Chip>
                                 )}
                             </div>
@@ -337,12 +339,12 @@ function ProductsContentInner() {
                                 <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <FiSearch className="h-12 w-12 text-gray-400" />
                                 </div>
-                                <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                                <h3 className="text-xl font-semibold text-gray-700 mb-2">{t("home.noProductsFound")}</h3>
                                 <p className="text-gray-500 mb-4">
-                                    {searchQuery || selectedCategory ? "Try adjusting your search or filter criteria" : "Check back later for new products"}
+                                    {searchQuery || selectedCategory ? t("products.noResultsHint") : t("products.checkBackLater")}
                                 </p>
                                 {(searchQuery || selectedCategory) && (
-                                    <Button color="primary" variant="flat" onPress={handleClearFilters}>Clear all filters</Button>
+                                    <Button color="primary" variant="flat" onPress={handleClearFilters}>{t("products.clearAllFilters")}</Button>
                                 )}
                             </motion.div>
                         ) : (
@@ -361,7 +363,7 @@ function ProductsContentInner() {
                                     const params = new URLSearchParams(searchParams)
                                     params.set('page', pagination.current_page - 1)
                                     router.push(`/products?${params.toString()}`)
-                                }}>Previous</Button>
+                                }}>{t("common.previous")}</Button>
                                 <div className="flex items-center gap-1">
                                     {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                                         let pageNum
@@ -392,7 +394,7 @@ function ProductsContentInner() {
                                     const params = new URLSearchParams(searchParams)
                                     params.set('page', pagination.current_page + 1)
                                     router.push(`/products?${params.toString()}`)
-                                }}>Next</Button>
+                                }}>{t("common.next")}</Button>
                             </div>
                         )}
                     </div>

@@ -16,7 +16,7 @@ import {
     FiShoppingCart
 } from "react-icons/fi"
 import { FaHeart } from "react-icons/fa"
-import { API } from "@/services/api"
+import { API, axiosInstance } from "@/services/api"
 import { PublicAPI } from "@/services/publicApi"
 import { setCart, updateQuantity, removeItem, clearCart } from "@/store/cartSlice"
 import { addToWishlist, removeFromWishlist } from "@/store/wishlistSlice"
@@ -34,10 +34,23 @@ export default function Cart() {
     const [recommendedProducts, setRecommendedProducts] = useState([])
     const [isUpdating, setIsUpdating] = useState(false)
     const [addingToCart, setAddingToCart] = useState(null)
+    const [couponCode, setCouponCode] = useState('')
+    const [appliedCoupon, setAppliedCoupon] = useState(null) // { code, discount, message }
+    const [couponError, setCouponError] = useState('')
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
 
     useEffect(() => {
         fetchCart()
         fetchRecommendedProducts()
+
+        const saved = localStorage.getItem('appliedCoupon')
+        if (saved) {
+            try {
+                setAppliedCoupon(JSON.parse(saved))
+            } catch {
+                localStorage.removeItem('appliedCoupon')
+            }
+        }
     }, [])
 
     const fetchCart = async () => {
@@ -207,11 +220,42 @@ export default function Cart() {
         return wishlistItems.some(item => item.id === productId)
     }
 
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) return
+        setIsApplyingCoupon(true)
+        setCouponError('')
+        try {
+            const response = await axiosInstance.post('/coupons/validate', {
+                code: couponCode.trim(),
+                subtotal: totalAmount,
+            })
+            setAppliedCoupon({ code: response.data.code, discount: response.data.discount })
+            // Persisted so the checkout page can read it and send it along
+            // when the order is actually placed.
+            localStorage.setItem('appliedCoupon', JSON.stringify({ code: response.data.code, discount: response.data.discount }))
+        } catch (error) {
+            setCouponError(error.response?.data?.message || 'Invalid coupon code')
+            setAppliedCoupon(null)
+            localStorage.removeItem('appliedCoupon')
+        } finally {
+            setIsApplyingCoupon(false)
+        }
+    }
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null)
+        setCouponCode('')
+        setCouponError('')
+        localStorage.removeItem('appliedCoupon')
+    }
+
     const handleCheckout = () => {
         router.push('/checkout')
     }
 
     const totalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0)
+    const discountAmount = appliedCoupon?.discount || 0
+    const finalTotal = Math.max(0, totalAmount - discountAmount)
 
     if (isLoading) {
         return (
@@ -347,11 +391,46 @@ export default function Cart() {
                     <div className="lg:col-span-1">
                         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 sticky top-20">
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Order Summary</h2>
+
+                            {/* Coupon code */}
+                            <div className="mb-4">
+                                {appliedCoupon ? (
+                                    <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-3 py-2 rounded-lg text-sm">
+                                        <span>Coupon <strong>{appliedCoupon.code}</strong> applied</span>
+                                        <button onClick={handleRemoveCoupon} className="underline">Remove</button>
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={couponCode}
+                                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                            placeholder="Coupon code"
+                                            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        />
+                                        <button
+                                            onClick={handleApplyCoupon}
+                                            disabled={isApplyingCoupon}
+                                            className="px-4 py-2 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-60"
+                                        >
+                                            {isApplyingCoupon ? "..." : "Apply"}
+                                        </button>
+                                    </div>
+                                )}
+                                {couponError && <p className="text-xs text-red-600 mt-1">{couponError}</p>}
+                            </div>
+
                             <div className="space-y-3">
                                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                     <span>Subtotal</span>
                                     <span>TSh {totalAmount.toLocaleString()}</span>
                                 </div>
+                                {discountAmount > 0 && (
+                                    <div className="flex justify-between text-green-600 dark:text-green-400">
+                                        <span>Discount</span>
+                                        <span>- TSh {discountAmount.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                     <span>Shipping</span>
                                     <span>Calculated at checkout</span>
@@ -359,7 +438,7 @@ export default function Cart() {
                                 <div className="border-t pt-3 mt-3">
                                     <div className="flex justify-between text-gray-900 dark:text-white font-semibold text-lg">
                                         <span>Total</span>
-                                        <span>TSh {totalAmount.toLocaleString()}</span>
+                                        <span>TSh {finalTotal.toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>

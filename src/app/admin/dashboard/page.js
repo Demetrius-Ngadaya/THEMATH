@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
+import { API_BASE_URL } from "@/utils/apiConfig"
 import {
     Card,
     CardBody,
@@ -43,7 +44,7 @@ export default function AdminDashboard() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'}/api/admin/dashboard/stats`, {
+            const response = await axios.get(`${API_BASE_URL}/admin/dashboard/stats`, {
                 params: { period: chartPeriod },
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -364,35 +365,27 @@ export default function AdminDashboard() {
                                 loadingContent={<Spinner label="Loading orders..." />}
                                 emptyContent="No orders found"
                             >
-                                {stats?.recent_orders?.length > 0 ? (
-                                    stats.recent_orders.map((order) => (
-                                        <TableRow key={order.id}>
-                                            <TableCell>#{order.id}</TableCell>
-                                            <TableCell>{order.user?.name || 'N/A'}</TableCell>
-                                            <TableCell>TSh {formatCurrency(order.grand_total)}</TableCell>
-                                            <TableCell>
-                                                <Chip
-                                                    color={
-                                                        order.status === 'completed' ? 'success' :
-                                                            order.status === 'pending' ? 'warning' :
-                                                                order.status === 'transported' ? 'primary' :
-                                                                    order.status === 'paid' ? 'secondary' : 'default'
-                                                    }
-                                                    size="sm"
-                                                >
-                                                    {order.status}
-                                                </Chip>
-                                            </TableCell>
-                                            <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    !isLoading && (
-                                        <TableRow>
-                                            <TableCell colSpan={5} className="text-center">No orders found</TableCell>
-                                        </TableRow>
-                                    )
-                                )}
+                                {(stats?.recent_orders || []).map((order) => (
+                                    <TableRow key={order.id}>
+                                        <TableCell>#{order.id}</TableCell>
+                                        <TableCell>{order.user?.name || 'N/A'}</TableCell>
+                                        <TableCell>TSh {formatCurrency(order.grand_total)}</TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                color={
+                                                    order.status === 'completed' ? 'success' :
+                                                        order.status === 'pending' ? 'warning' :
+                                                            order.status === 'transported' ? 'primary' :
+                                                                order.status === 'paid' ? 'secondary' : 'default'
+                                                }
+                                                size="sm"
+                                            >
+                                                {order.status}
+                                            </Chip>
+                                        </TableCell>
+                                        <TableCell>{new Date(order.created_at).toLocaleDateString()}</TableCell>
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </div>

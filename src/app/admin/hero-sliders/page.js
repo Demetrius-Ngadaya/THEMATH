@@ -11,8 +11,8 @@ import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSearch } from "react-icon
 import axios from "axios"
 import { toast } from "react-hot-toast"
 
-// Get base URL from environment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com/api'
+import { API_BASE_URL } from "@/utils/apiConfig"
+import { getImageUrl } from "@/utils/imageHelper"
 
 export default function AdminHeroSlidersPage() {
     const [sliders, setSliders] = useState([])
@@ -98,9 +98,7 @@ export default function AdminHeroSlidersPage() {
             })
             // Set image preview from existing image
             if (slider.image) {
-                const imageUrl = slider.image.startsWith('http')
-                    ? slider.image
-                    : `${API_BASE_URL.replace('/api', '')}/storage/${slider.image}`
+                const imageUrl = getImageUrl(slider.image)
                 setImagePreview(imageUrl)
             } else {
                 setImagePreview("")
@@ -296,16 +294,7 @@ export default function AdminHeroSlidersPage() {
                     >
                         {filteredSliders.map((slider) => {
                             // Get image URL
-                            let imageUrl = ''
-                            if (slider.image) {
-                                if (slider.image.startsWith('http')) {
-                                    imageUrl = slider.image
-                                } else if (slider.image.startsWith('/storage')) {
-                                    imageUrl = `${API_BASE_URL.replace('/api', '')}${slider.image}`
-                                } else {
-                                    imageUrl = `${API_BASE_URL.replace('/api', '')}/storage/${slider.image}`
-                                }
-                            }
+                            const imageUrl = slider.image ? getImageUrl(slider.image) : ''
 
                             return (
                                 <TableRow key={slider.id}>

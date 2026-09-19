@@ -10,6 +10,7 @@ import {
 import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff, FiSearch } from "react-icons/fi"
 import API, { axiosInstance } from "@/services/api"  // Import both
 import { toast } from "react-hot-toast"
+import { getImageUrl } from "@/utils/imageHelper"
 
 export default function AdminAboutHeroSlidersPage() {
     const [sliders, setSliders] = useState([])
@@ -254,7 +255,7 @@ export default function AdminAboutHeroSlidersPage() {
                                 <TableCell>
                                     {slider.image ? (
                                         <Image
-                                            src={`https://backendapi.emcc-lab.com${slider.image}`}
+                                            src={getImageUrl(slider.image)}
                                             alt={slider.title}
                                             width={60}
                                             height={40}
@@ -380,7 +381,7 @@ export default function AdminAboutHeroSlidersPage() {
                                 {imagePreview && (
                                     <div className="mt-2">
                                         <Image
-                                            src={imagePreview.startsWith('http') ? imagePreview : `https://backendapi.emcc-lab.com${imagePreview}`}
+                                            src={getImageUrl(imagePreview)}
                                             alt="Preview"
                                             width={200}
                                             height={133}

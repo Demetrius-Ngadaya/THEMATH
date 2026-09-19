@@ -2,10 +2,19 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { HiOutlineStar, HiOutlineShoppingCart } from "react-icons/hi"
+import { useRouter } from "next/navigation"
+import { useDispatch, useSelector } from "react-redux"
+import { HiOutlineStar, HiOutlineShoppingCart, HiHeart, HiOutlineHeart } from "react-icons/hi"
 import { getImageUrl } from "@/utils/imageHelper"
+import { addToWishlist, removeFromWishlist } from "@/store/wishlistSlice"
+import { showSuccess, showError } from "@/utils/sweetalert"
+import Cookies from "js-cookie"
 
 export default function ProductGrid({ products, isLoading, onAddToCart, onProductClick, addingToCart }) {
+    const dispatch = useDispatch()
+    const router = useRouter()
+    const wishlistItems = useSelector((state) => state.wishlist?.items || [])
+
     if (isLoading) {
         return (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -38,6 +47,32 @@ export default function ProductGrid({ products, isLoading, onAddToCart, onProduc
         e.stopPropagation() // Prevent triggering the card click
         if (onAddToCart) {
             onAddToCart(product)
+        }
+    }
+
+    const handleWishlistToggle = (e, product) => {
+        e.stopPropagation()
+        const token = Cookies.get('auth_token')
+
+        if (!token) {
+            localStorage.setItem('redirectAfterLogin', '/wishlist')
+            showError('Please Login', 'You need to login first to use your wishlist')
+            router.push('/login')
+            return
+        }
+
+        const isInWishlist = wishlistItems.some((item) => item.id === product.id)
+        if (isInWishlist) {
+            dispatch(removeFromWishlist(product.id))
+            showSuccess('Removed', `${product.name} removed from wishlist`)
+        } else {
+            dispatch(addToWishlist({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: product.images?.[0]?.path || '/placeholder.jpg'
+            }))
+            showSuccess('Added', `${product.name} added to wishlist`)
         }
     }
 
@@ -88,6 +123,18 @@ export default function ProductGrid({ products, isLoading, onAddToCart, onProduc
                                 -{product.discount}%
                             </div>
                         )}
+
+                        {/* Wishlist toggle */}
+                        <button
+                            onClick={(e) => handleWishlistToggle(e, product)}
+                            className="absolute right-2 top-2 rounded-full bg-white p-2 shadow-lg dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 z-10"
+                        >
+                            {wishlistItems.some((item) => item.id === product.id) ? (
+                                <HiHeart className="h-5 w-5 text-red-500" />
+                            ) : (
+                                <HiOutlineHeart className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                            )}
+                        </button>
                     </div>
 
                     <div className="p-4">

@@ -1,5 +1,6 @@
 "use client"
 
+import { API_BASE_URL } from "@/utils/apiConfig"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Cookies from "js-cookie"
@@ -52,7 +53,7 @@ export default function AdminCategories() {
         setIsLoading(true)
         try {
             const token = Cookies.get('admin_token')
-            const response = await axios.get('https://backendapi.emcc-lab.com/api/admin/categories', {
+            const response = await axios.get(`${API_BASE_URL}/admin/categories`, {
                 params: { search, page, per_page: perPage },
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -83,7 +84,7 @@ export default function AdminCategories() {
             if (editingCategory) {
                 // For update, Laravel needs POST with _method PUT for file uploads
                 submitData.append('_method', 'PUT')
-                await axios.post(`https://backendapi.emcc-lab.com/api/admin/categories/${editingCategory.id}`,
+                await axios.post(`${API_BASE_URL}/admin/categories/${editingCategory.id}`,
                     submitData,
                     {
                         headers: {
@@ -94,7 +95,7 @@ export default function AdminCategories() {
                 )
                 showSuccess('Updated', 'Category updated successfully')
             } else {
-                await axios.post('https://backendapi.emcc-lab.com/api/admin/categories',
+                await axios.post(`${API_BASE_URL}/admin/categories`,
                     submitData,
                     {
                         headers: {
@@ -122,7 +123,7 @@ export default function AdminCategories() {
         if (result.isConfirmed) {
             try {
                 const token = Cookies.get('admin_token')
-                await axios.delete(`https://backendapi.emcc-lab.com/api/admin/categories/${categoryId}`, {
+                await axios.delete(`${API_BASE_URL}/admin/categories/${categoryId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 showSuccess('Deleted', 'Category deleted successfully')

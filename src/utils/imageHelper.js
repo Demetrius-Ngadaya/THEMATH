@@ -1,30 +1,18 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backendapi.emcc-lab.com'
+import { STORAGE_BASE_URL } from './apiConfig'
 
 export const getImageUrl = (path) => {
     if (!path) return null
 
-    // If it's already an absolute URL, return as is
-    if (path.startsWith('http://') || path.startsWith('https://')) {
+    // Already an absolute URL or a base64 data URI - return as is.
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
         return path
     }
 
-    // If it starts with /storage, add base URL
-    if (path.startsWith('/storage')) {
-        return `${API_BASE_URL}${path}`
-    }
+    // Normalize away any leading "storage/" or "/storage/" the caller may
+    // have included, since STORAGE_BASE_URL already ends in /storage.
+    const clean = path.replace(/^\/?storage\//, '').replace(/^\//, '')
 
-    // If it starts with storage/ (no leading slash)
-    if (path.startsWith('storage/')) {
-        return `${API_BASE_URL}/${path}`
-    }
-
-    // If it's a products/ path
-    if (path.startsWith('products/')) {
-        return `${API_BASE_URL}/storage/${path}`
-    }
-
-    // Default: assume it's a storage path
-    return `${API_BASE_URL}/storage/${path}`
+    return `${STORAGE_BASE_URL}/${clean}`
 }
 
 export const validateImage = (file) => {

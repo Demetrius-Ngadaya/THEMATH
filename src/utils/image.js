@@ -1,6 +1,4 @@
-export const getImageUrl = (path) => {
-    if (!path) return null;
-    if (path.startsWith('http')) return path;
-    if (path.startsWith('data:')) return path;
-    return `https://backendapi.emcc-lab.com${path}`;
-};
+// This file used to have its own hardcoded getImageUrl - now it just
+// re-exports the single canonical implementation so anything still
+// importing from "utils/image" stays in sync automatically.
+export { getImageUrl } from './imageHelper'

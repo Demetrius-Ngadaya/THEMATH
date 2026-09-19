@@ -218,7 +218,7 @@ export default function Wishlist() {
                                 </div>
                             )}
 
-                            <Link href={`/products/${item.id}`}>
+                            <Link href={`/product/${item.id}`}>
                                 <div className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center overflow-hidden">
                                     {imageUrl ? (
                                         <img
@@ -247,7 +247,7 @@ export default function Wishlist() {
                             </Link>
 
                             <div className="p-4">
-                                <Link href={`/products/${item.id}`}>
+                                <Link href={`/product/${item.id}`}>
                                     <h3 className="font-semibold text-gray-900 dark:text-white hover:text-blue-600 transition-colors line-clamp-2 min-h-[48px]">
                                         {item.name}
                                     </h3>
