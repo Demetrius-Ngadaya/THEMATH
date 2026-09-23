@@ -23,6 +23,7 @@ import { addToWishlist, removeFromWishlist } from "@/store/wishlistSlice"
 import { showSuccess, showError, showConfirm } from "@/utils/sweetalert"
 import { getImageUrl } from "@/utils/imageHelper"
 import Cookies from "js-cookie"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function Cart() {
     const dispatch = useDispatch()
@@ -38,6 +39,7 @@ export default function Cart() {
     const [appliedCoupon, setAppliedCoupon] = useState(null) // { code, discount, message }
     const [couponError, setCouponError] = useState('')
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
+    const { t } = useLanguage()
 
     useEffect(() => {
         fetchCart()
@@ -274,15 +276,15 @@ export default function Cart() {
 
     return (
         <div className="container mx-auto px-4 py-10">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Shopping Cart</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{t("cart.title")}</h1>
 
             {items.length === 0 ? (
                 <div className="text-center py-20">
                     <FiShoppingBag className="h-24 w-24 mx-auto text-gray-400 mb-4" />
-                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Your cart is empty</h2>
-                    <p className="text-gray-500 mb-6">Looks like you haven't added any items to your cart yet.</p>
+                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">{t("cart.empty")}</h2>
+                    <p className="text-gray-500 mb-6">{t("cart.emptySubtitle")}</p>
                     <Link href="/products" className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
-                        Browse Products
+                        {t("cart.browseProducts")}
                     </Link>
                 </div>
             ) : (
@@ -317,7 +319,7 @@ export default function Cart() {
                                                             />
                                                         ) : null}
                                                         <span className={`text-white text-xs ${imageUrl ? 'hidden' : 'flex'} items-center justify-center w-full h-full`}>
-                                                            No Image
+                                                            {t("home.noImage")}
                                                         </span>
                                                     </div>
 
@@ -331,14 +333,14 @@ export default function Cart() {
                                                                 <button
                                                                     onClick={() => handleAddToWishlist({ id: item.id, name: item.name, price: item.price })}
                                                                     className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                                                    title="Add to wishlist"
+                                                                    title={t("product.addToWishlistTitle")}
                                                                 >
                                                                     {isInWishlist(item.id) ? <FaHeart className="h-5 w-5 text-red-500" /> : <FiHeart className="h-5 w-5" />}
                                                                 </button>
                                                                 <button
                                                                     onClick={() => handleRemoveItem(item.product_id || item.id, item.name)}
                                                                     className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                                                    title="Remove item"
+                                                                    title={t("cart.removeItemTitle")}
                                                                 >
                                                                     <FiTrash2 className="h-5 w-5" />
                                                                 </button>
@@ -378,10 +380,10 @@ export default function Cart() {
                             </div>
 
                             <div className="p-4 border-t border-gray-200 dark:border-gray-800 flex justify-between">
-                                <button onClick={handleClearCart} className="text-red-500 hover:text-red-700 text-sm font-medium">Clear Cart</button>
+                                <button onClick={handleClearCart} className="text-red-500 hover:text-red-700 text-sm font-medium">{t("cart.clearCartButton")}</button>
                                 <Link href="/products">
                                     <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                        Continue Shopping →
+                                        {t("common.continueShopping")} →
                                     </button>
                                 </Link>
                             </div>
@@ -390,14 +392,14 @@ export default function Cart() {
 
                     <div className="lg:col-span-1">
                         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 sticky top-20">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Order Summary</h2>
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{t("cart.orderSummary")}</h2>
 
                             {/* Coupon code */}
                             <div className="mb-4">
                                 {appliedCoupon ? (
                                     <div className="flex items-center justify-between bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-3 py-2 rounded-lg text-sm">
-                                        <span>Coupon <strong>{appliedCoupon.code}</strong> applied</span>
-                                        <button onClick={handleRemoveCoupon} className="underline">Remove</button>
+                                        <span>{t("cart.couponAppliedLabel")} <strong>{appliedCoupon.code}</strong> {t("cart.appliedSuffix")}</span>
+                                        <button onClick={handleRemoveCoupon} className="underline">{t("cart.remove")}</button>
                                     </div>
                                 ) : (
                                     <div className="flex gap-2">
@@ -405,7 +407,7 @@ export default function Cart() {
                                             type="text"
                                             value={couponCode}
                                             onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                            placeholder="Coupon code"
+                                            placeholder={t("cart.couponCode")}
                                             className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                         <button
@@ -413,7 +415,7 @@ export default function Cart() {
                                             disabled={isApplyingCoupon}
                                             className="px-4 py-2 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-60"
                                         >
-                                            {isApplyingCoupon ? "..." : "Apply"}
+                                            {isApplyingCoupon ? "..." : t("cart.apply")}
                                         </button>
                                     </div>
                                 )}
@@ -422,22 +424,22 @@ export default function Cart() {
 
                             <div className="space-y-3">
                                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                                    <span>Subtotal</span>
+                                    <span>{t("common.subtotal")}</span>
                                     <span>TSh {totalAmount.toLocaleString()}</span>
                                 </div>
                                 {discountAmount > 0 && (
                                     <div className="flex justify-between text-green-600 dark:text-green-400">
-                                        <span>Discount</span>
+                                        <span>{t("common.discount")}</span>
                                         <span>- TSh {discountAmount.toLocaleString()}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                                    <span>Shipping</span>
-                                    <span>Calculated at checkout</span>
+                                    <span>{t("common.shipping")}</span>
+                                    <span>{t("cart.calculatedAtCheckout")}</span>
                                 </div>
                                 <div className="border-t pt-3 mt-3">
                                     <div className="flex justify-between text-gray-900 dark:text-white font-semibold text-lg">
-                                        <span>Total</span>
+                                        <span>{t("common.total")}</span>
                                         <span>TSh {finalTotal.toLocaleString()}</span>
                                     </div>
                                 </div>
@@ -446,7 +448,7 @@ export default function Cart() {
                                 onClick={handleCheckout}
                                 className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                             >
-                                Proceed to Checkout
+                                {t("cart.proceedToCheckout")}
                             </button>
                         </div>
                     </div>
@@ -456,7 +458,7 @@ export default function Cart() {
             {/* Recommended Products Section - Click to Add to Cart */}
             {recommendedProducts.length > 0 && items.length > 0 && (
                 <div className="mt-16">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">You May Also Like</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t("cart.youMayAlsoLike")}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {recommendedProducts.map((product) => (
                             <motion.div
@@ -475,7 +477,7 @@ export default function Cart() {
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            <span className="text-sm font-semibold">Adding...</span>
+                                            <span className="text-sm font-semibold">{t("product.adding")}</span>
                                         </div>
                                     </div>
                                 )}
@@ -487,7 +489,7 @@ export default function Cart() {
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                         />
                                     ) : (
-                                        <span className="text-white text-sm">Product</span>
+                                        <span className="text-white text-sm">{t("cart.productFallback")}</span>
                                     )}
                                 </div>
                                 <div className="p-4">
@@ -506,7 +508,7 @@ export default function Cart() {
                                             className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                                         >
                                             <FiShoppingCart className="h-4 w-4" />
-                                            Add to Cart
+                                            {t("common.addToCart")}
                                         </button>
                                         <button
                                             onClick={(e) => {

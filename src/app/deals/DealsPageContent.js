@@ -1,4 +1,4 @@
-// src/app/deals/page.js
+// app/deals/DealsPageContent.js
 "use client"
 
 import { useState, useEffect } from "react"
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { getImageUrl } from "@/utils/imageHelper"
 import { showSuccess, showError } from "@/utils/sweetalert"
 import Cookies from "js-cookie"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 const secondsUntil = (isoDate) => {
     if (!isoDate) return null
@@ -24,6 +25,7 @@ export default function DealsPageContent() {
     const [isLoading, setIsLoading] = useState(true)
     const [addingToCart, setAddingToCart] = useState(null)
     const router = useRouter()
+    const { t } = useLanguage()
 
     useEffect(() => {
         fetchDeals()
@@ -107,18 +109,18 @@ export default function DealsPageContent() {
                     >
                         <HiOutlineFire className="h-16 w-16 text-white mx-auto" />
                     </motion.div>
-                    <h1 className="text-4xl font-bold text-white mb-4">Hot Deals & Offers</h1>
+                    <h1 className="text-4xl font-bold text-white mb-4">{t("deals.title")}</h1>
                     <p className="text-xl text-white/90 max-w-2xl mx-auto">
                         {deals.length > 0
-                            ? "Click any product to add it to your cart instantly."
-                            : "No active deals right now - check back soon!"}
+                            ? t("deals.clickHint")
+                            : t("deals.noActiveDealsHero")}
                     </p>
                 </motion.div>
             </section>
 
             {deals.length === 0 && !isLoading && (
                 <div className="text-center py-16">
-                    <p className="text-gray-500 text-lg">There are no active deals at the moment.</p>
+                    <p className="text-gray-500 text-lg">{t("deals.noActiveDeals")}</p>
                 </div>
             )}
 
@@ -126,10 +128,10 @@ export default function DealsPageContent() {
             {flashDeals.length > 0 && (
                 <section className="container mx-auto px-4">
                     <div className="mb-8 flex items-center justify-between">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Flash Deals</h2>
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("deals.flashDeals")}</h2>
                         <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                             <HiOutlineClock className="h-5 w-5" />
-                            <span className="font-semibold">Ending Soon</span>
+                            <span className="font-semibold">{t("deals.endingSoon")}</span>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -140,6 +142,7 @@ export default function DealsPageContent() {
                                 index={index}
                                 addingToCart={addingToCart}
                                 onClick={() => addToCartAndRedirect(deal)}
+                                t={t}
                             />
                         ))}
                     </div>
@@ -150,10 +153,10 @@ export default function DealsPageContent() {
             {deals.length > 0 && (
                 <section className="container mx-auto px-4">
                     <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">All Deals</h2>
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("deals.allDeals")}</h2>
                         <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                             <HiOutlineTag className="h-5 w-5" />
-                            <span className="font-semibold">Click Any Product</span>
+                            <span className="font-semibold">{t("deals.clickAnyProduct")}</span>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -164,6 +167,7 @@ export default function DealsPageContent() {
                                 index={index}
                                 addingToCart={addingToCart}
                                 onClick={() => addToCartAndRedirect(deal)}
+                                t={t}
                             />
                         ))}
                     </div>
@@ -173,7 +177,7 @@ export default function DealsPageContent() {
     )
 }
 
-function DealCard({ deal, index, addingToCart, onClick }) {
+function DealCard({ deal, index, addingToCart, onClick, t }) {
     const product = deal.product
     if (!product) return null
 
@@ -197,7 +201,7 @@ function DealCard({ deal, index, addingToCart, onClick }) {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span className="text-sm font-semibold">Adding to Cart...</span>
+                        <span className="text-sm font-semibold">{t("home.addingToCart")}</span>
                     </div>
                 </div>
             )}
@@ -211,7 +215,7 @@ function DealCard({ deal, index, addingToCart, onClick }) {
                             onError={(e) => { e.target.src = '/placeholder.jpg' }}
                         />
                     ) : (
-                        <span className="text-white text-sm">Product</span>
+                        <span className="text-white text-sm">{t("cart.productFallback")}</span>
                     )}
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">{product.name}</h3>
@@ -227,7 +231,7 @@ function DealCard({ deal, index, addingToCart, onClick }) {
                     <CountdownTimer initialSeconds={secondsUntil(deal.ends_at)} />
                 )}
                 <div className="mt-4 text-center text-sm text-blue-600 dark:text-blue-400 font-semibold">
-                    Click to add to cart →
+                    {t("deals.clickToAddToCart")} →
                 </div>
             </div>
         </motion.div>

@@ -13,6 +13,7 @@ import { addToCart } from "@/store/cartSlice"
 import { fetchWishlist } from "@/store/wishlistSlice"
 import { FiMail, FiLock, FiAlertCircle, FiLogIn } from "react-icons/fi"
 import { motion } from "framer-motion"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -20,6 +21,7 @@ export default function Login() {
     const [error, setError] = useState(null)
     const router = useRouter()
     const dispatch = useDispatch()
+    const { t } = useLanguage()
 
     const submit = async (data) => {
         setIsLoading(true)
@@ -95,8 +97,8 @@ export default function Login() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
                             </motion.div>
-                            <h2 className="text-3xl font-bold text-gray-800">Welcome Back</h2>
-                            <p className="text-gray-500 mt-2">Sign in to your account</p>
+                            <h2 className="text-3xl font-bold text-gray-800">{t("auth.loginTitle")}</h2>
+                            <p className="text-gray-500 mt-2">{t("auth.loginSubtitle")}</p>
                         </div>
 
                         {error && (
@@ -113,7 +115,7 @@ export default function Login() {
                         <form className="space-y-5" onSubmit={handleSubmit(submit)}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email Address
+                                    {t("auth.emailAddress")}
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -122,10 +124,10 @@ export default function Login() {
                                     <input
                                         type="email"
                                         {...register("email", {
-                                            required: "Email is required",
+                                            required: t("auth.emailRequired"),
                                             pattern: {
                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                message: "Invalid email address"
+                                                message: t("auth.invalidEmail")
                                             }
                                         })}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -140,10 +142,10 @@ export default function Login() {
                             <div>
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Password
+                                        {t("common.password")}
                                     </label>
                                     <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                                        Forgot password?
+                                        {t("auth.forgotPassword")}
                                     </Link>
                                 </div>
                                 <div className="relative">
@@ -152,7 +154,7 @@ export default function Login() {
                                     </div>
                                     <input
                                         type="password"
-                                        {...register("password", { required: "Password is required" })}
+                                        {...register("password", { required: t("auth.passwordRequired") })}
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                         placeholder="••••••"
                                     />
@@ -173,12 +175,12 @@ export default function Login() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Signing in...
+                                        {t("auth.signingIn")}
                                     </>
                                 ) : (
                                     <>
                                         <FiLogIn className="h-5 w-5" />
-                                        Sign in
+                                        {t("auth.signIn")}
                                     </>
                                 )}
                             </button>
@@ -186,9 +188,9 @@ export default function Login() {
 
                         <div className="mt-6 text-center">
                             <p className="text-sm text-gray-600">
-                                Don't have an account?{" "}
+                                {t("auth.noAccount")}{" "}
                                 <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                                    Create new account
+                                    {t("auth.createAccount")}
                                 </Link>
                             </p>
                         </div>

@@ -16,6 +16,7 @@ import {
     HiOutlinePhone
 } from "react-icons/hi"
 import { FaDatabase, FaRegLightbulb } from "react-icons/fa"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Animation variants
 const fadeInUp = {
@@ -43,8 +44,15 @@ const cardHover = {
 export default function ServicesPageContent() {
     const [activeCategory, setActiveCategory] = useState("all")
     const [searchTerm, setSearchTerm] = useState("")
+    const { t } = useLanguage()
 
     // Service Categories Data
+    // NOTE: category names and all technical content below (model names,
+    // software tools, process steps) are deliberately kept in English -
+    // this is specialist statistical/econometric terminology where an
+    // inconsistent partial translation (translating short labels but not
+    // the detailed content under them) would read as more broken than
+    // helpful. Only the surrounding page chrome is translated.
     const categories = [
         { id: "all", name: "All Services", icon: HiOutlineChartBar },
         { id: "cross-sectional", name: "Cross-Sectional", icon: HiOutlineChartBar },
@@ -196,18 +204,17 @@ export default function ServicesPageContent() {
                 >
                     <motion.div variants={fadeInUp}>
                         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                            Data Analysis Services
+                            {t("services.heroTitle")}
                         </h1>
                         <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-                            Professional statistical consulting, advanced analytics, and research support
-                            for academic, business, and organizational success
+                            {t("services.heroSubtitle")}
                         </p>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
                         >
-                            Get Started
+                            {t("services.getStarted")}
                         </motion.button>
                     </motion.div>
                 </motion.div>
@@ -299,7 +306,7 @@ export default function ServicesPageContent() {
                                     <HiOutlineSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                                     <input
                                         type="text"
-                                        placeholder="Search services..."
+                                        placeholder={t("services.searchPlaceholder")}
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -346,7 +353,7 @@ export default function ServicesPageContent() {
 
                         {searchTerm && filteredItems && filteredItems.length === 0 && (
                             <div className="text-center py-12">
-                                <p className="text-gray-500">No services found matching "{searchTerm}"</p>
+                                <p className="text-gray-500">{t("services.noServicesFound")} "{searchTerm}"</p>
                             </div>
                         )}
                     </motion.div>
@@ -362,9 +369,9 @@ export default function ServicesPageContent() {
                         transition={{ duration: 0.6 }}
                         className="text-center text-white"
                     >
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Project?</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-6">{t("services.ctaTitle")}</h2>
                         <p className="text-xl mb-8 max-w-2xl mx-auto">
-                            Contact us today for a free consultation and let's bring your data to life
+                            {t("services.ctaSubtitle")}
                         </p>
                         <div className="flex flex-col md:flex-row justify-center gap-4">
                             <motion.a
@@ -373,7 +380,7 @@ export default function ServicesPageContent() {
                                 className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all"
                             >
                                 <HiOutlineMail className="h-5 w-5" />
-                                Email Us
+                                {t("services.emailUs")}
                             </motion.a>
                             <motion.a
                                 href="tel:+255712345678"
@@ -381,7 +388,7 @@ export default function ServicesPageContent() {
                                 className="inline-flex items-center gap-2 bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-all"
                             >
                                 <HiOutlinePhone className="h-5 w-5" />
-                                Call Us
+                                {t("services.callUs")}
                             </motion.a>
                         </div>
                     </motion.div>

@@ -7,12 +7,14 @@ import { motion } from "framer-motion"
 import { HiOutlineArrowLeft, HiOutlinePackage, HiOutlineClock, HiOutlineCheckCircle, HiOutlineTruck, HiOutlineXCircle } from "react-icons/hi"
 import { API } from "@/services/api"
 import Cookies from "js-cookie"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function OrderDetailPage() {
     const { id } = useParams()
     const router = useRouter()
     const [order, setOrder] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
+    const { t } = useLanguage()
 
     useEffect(() => {
         const token = Cookies.get('auth_token')
@@ -48,6 +50,14 @@ export default function OrderDetailPage() {
         }
     }
 
+    // Same status translation mapping as the orders list page - keeps the
+    // raw backend value (always English) but displays it translated.
+    const getStatusLabel = (status) => {
+        const key = `orders.status${status ? status.charAt(0).toUpperCase() + status.slice(1) : ''}`
+        const translated = t(key)
+        return translated === key ? status : translated
+    }
+
     if (isLoading) {
         return (
             <div className="container mx-auto px-4 py-10">
@@ -65,25 +75,25 @@ export default function OrderDetailPage() {
         <div className="container mx-auto px-4 py-10">
             <Link href="/orders" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
                 <HiOutlineArrowLeft className="h-4 w-4" />
-                Back to Orders
+                {t("orders.backToOrders")}
             </Link>
 
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Order Details</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{t("orders.orderDetails")}</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Order Info */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Order Status */}
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
-                        <h2 className="text-xl font-semibold mb-4">Order Status</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t("orders.orderStatusHeading")}</h2>
                         <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                            <span className="capitalize">{order.status}</span>
+                            <span className="capitalize">{getStatusLabel(order.status)}</span>
                         </div>
                     </div>
 
                     {/* Order Items */}
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6">
-                        <h2 className="text-xl font-semibold mb-4">Order Items</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t("checkout.orderItems")}</h2>
                         <div className="space-y-4">
                             {order.items?.map((item, index) => (
                                 <motion.div
@@ -95,7 +105,7 @@ export default function OrderDetailPage() {
                                 >
                                     <div>
                                         <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
-                                        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                                        <p className="text-sm text-gray-500">{t("common.quantity")}: {item.quantity}</p>
                                     </div>
                                     <p className="font-semibold text-gray-900 dark:text-white">
                                         TSh {item.total?.toLocaleString()}
@@ -109,10 +119,10 @@ export default function OrderDetailPage() {
                 {/* Order Summary */}
                 <div>
                     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-6 sticky top-20">
-                        <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                        <h2 className="text-xl font-semibold mb-4">{t("cart.orderSummary")}</h2>
                         <div className="space-y-3">
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Subtotal</span>
+                                <span className="text-gray-600">{t("common.subtotal")}</span>
                                 <span>TSh {order.subtotal?.toLocaleString()}</span>
                             </div>
                             {/* <div className="flex justify-between">
@@ -132,7 +142,7 @@ export default function OrderDetailPage() {
                         </div>
 
                         <div className="mt-6 pt-6 border-t">
-                            <p className="text-sm text-gray-500">Order Date</p>
+                            <p className="text-sm text-gray-500">{t("orders.orderDate")}</p>
                             <p className="font-medium">
                                 {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}
                             </p>

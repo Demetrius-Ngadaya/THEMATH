@@ -92,9 +92,13 @@ export const API = {
     clearCart: () => api.delete('/cart/clear'),
 
     // Orders
+    // NOTE: createOrder MUST accept a data payload - checkout sends
+    // { coupon_code } here. Without the parameter, an applied coupon is
+    // silently dropped and the customer is charged full price. This was
+    // fixed once before; if you see it reverted again, re-apply this.
     getOrders: () => api.get('/orders'),
     getOrder: (id) => api.get(`/orders/${id}`),
-    createOrder: () => api.post('/orders'),
+    createOrder: (data) => api.post('/orders', data),
     createDirectOrder: (data) => api.post('/direct-order', data),
 
     // Checkout

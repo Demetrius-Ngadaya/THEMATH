@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineClock } from "react-icons/hi"
 
 import { API_BASE_URL as API_BASE } from "@/utils/apiConfig"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function ContactPageContent() {
     const [isSubmitted, setIsSubmitted] = useState(false)
@@ -14,6 +15,7 @@ export default function ContactPageContent() {
     const [submitError, setSubmitError] = useState("")
     const [settings, setSettings] = useState(null)
     const { register, handleSubmit, formState: { errors }, reset } = useForm()
+    const { t } = useLanguage()
 
     useEffect(() => {
         axios
@@ -30,17 +32,17 @@ export default function ContactPageContent() {
             setIsSubmitted(true)
             reset()
         } catch (error) {
-            setSubmitError("Something went wrong sending your message. Please try again, or use the contact details below.")
+            setSubmitError(t("contact.sendError"))
         } finally {
             setIsSending(false)
         }
     }
 
     const contactInfo = [
-        { icon: HiOutlineMail, title: "Email", value: settings?.email, link: settings?.email ? `mailto:${settings.email}` : undefined },
-        { icon: HiOutlinePhone, title: "Phone", value: settings?.phone, link: settings?.phone ? `tel:${settings.phone.replace(/\s+/g, "")}` : undefined },
-        { icon: HiOutlineLocationMarker, title: "Address", value: settings?.address },
-        { icon: HiOutlineClock, title: "Business Hours", value: settings?.business_hours },
+        { icon: HiOutlineMail, title: t("common.email"), value: settings?.email, link: settings?.email ? `mailto:${settings.email}` : undefined },
+        { icon: HiOutlinePhone, title: t("common.phone"), value: settings?.phone, link: settings?.phone ? `tel:${settings.phone.replace(/\s+/g, "")}` : undefined },
+        { icon: HiOutlineLocationMarker, title: t("common.address"), value: settings?.address },
+        { icon: HiOutlineClock, title: t("contact.businessHours"), value: settings?.business_hours },
     ]
 
     const hasMap = settings?.map_lat && settings?.map_lng
@@ -77,9 +79,9 @@ export default function ContactPageContent() {
                     animate={{ opacity: 1, y: 0 }}
                     className="relative z-10 px-6 py-16 text-center"
                 >
-                    <h1 className="text-4xl font-bold text-white mb-4">Contact Us</h1>
+                    <h1 className="text-4xl font-bold text-white mb-4">{t("contact.title")}</h1>
                     <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                        Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                        {t("contact.heroSubtitle")}
                     </p>
                 </motion.div>
             </section>
@@ -110,7 +112,7 @@ export default function ContactPageContent() {
                     animate={{ opacity: 1, x: 0 }}
                     className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg"
                 >
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send us a Message</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t("contact.sendUsMessage")}</h2>
 
                     {isSubmitted ? (
                         <motion.div
@@ -119,25 +121,25 @@ export default function ContactPageContent() {
                             className="text-center py-8"
                         >
                             <div className="text-6xl mb-4">✅</div>
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Thank You!</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t("contact.thankYou")}</h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                Your message has been sent successfully. We'll get back to you soon.
+                                {t("contact.messageSentSuccess")}
                             </p>
                             <button
                                 onClick={() => setIsSubmitted(false)}
                                 className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
                             >
-                                Send another message
+                                {t("contact.sendAnotherMessage")}
                             </button>
                         </motion.div>
                     ) : (
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Name *
+                                    {t("common.name")} *
                                 </label>
                                 <input
-                                    {...register("name", { required: "Name is required" })}
+                                    {...register("name", { required: t("auth.nameRequired") })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                                 {errors.name && (
@@ -147,14 +149,14 @@ export default function ContactPageContent() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Email *
+                                    {t("common.email")} *
                                 </label>
                                 <input
                                     {...register("email", {
-                                        required: "Email is required",
+                                        required: t("auth.emailRequired"),
                                         pattern: {
                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: "Invalid email address"
+                                            message: t("auth.invalidEmail")
                                         }
                                     })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -166,7 +168,7 @@ export default function ContactPageContent() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Phone
+                                    {t("common.phone")}
                                 </label>
                                 <input
                                     {...register("phone")}
@@ -176,10 +178,10 @@ export default function ContactPageContent() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Subject *
+                                    {t("contact.subject")} *
                                 </label>
                                 <input
-                                    {...register("subject", { required: "Subject is required" })}
+                                    {...register("subject", { required: t("contact.subjectRequired") })}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                                 {errors.subject && (
@@ -189,10 +191,10 @@ export default function ContactPageContent() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Message *
+                                    {t("common.message")} *
                                 </label>
                                 <textarea
-                                    {...register("message", { required: "Message is required" })}
+                                    {...register("message", { required: t("contact.messageRequired") })}
                                     rows="5"
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
@@ -212,7 +214,7 @@ export default function ContactPageContent() {
                                 whileTap={{ scale: 0.98 }}
                                 className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
                             >
-                                {isSending ? "Sending..." : "Send Message"}
+                                {isSending ? t("contact.sending") : t("contact.sendMessage")}
                             </motion.button>
                         </form>
                     )}
@@ -224,7 +226,7 @@ export default function ContactPageContent() {
                     animate={{ opacity: 1, x: 0 }}
                     className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg"
                 >
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Visit Us</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">{t("contact.visitUs")}</h2>
                     <div className="relative h-96 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800">
                         {hasMap ? (
                             <iframe
@@ -236,7 +238,7 @@ export default function ContactPageContent() {
                             />
                         ) : (
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <p className="text-gray-500">Map location not set yet</p>
+                                <p className="text-gray-500">{t("contact.mapNotSet")}</p>
                             </div>
                         )}
                     </div>
@@ -247,7 +249,7 @@ export default function ContactPageContent() {
                             rel="noopener noreferrer"
                             className="mt-4 inline-block text-blue-600 dark:text-blue-400 font-medium hover:underline"
                         >
-                            Get Directions →
+                            {t("contact.getDirections")} →
                         </a>
                     )}
                 </motion.div>
@@ -256,9 +258,9 @@ export default function ContactPageContent() {
             {/* Save Our Contact - QR code */}
             {qrCodeUrl && (
                 <section className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Save Our Contact</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t("contact.saveContact")}</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                        Scan this code with your phone's camera to instantly save our phone, WhatsApp, email, and address as a new contact.
+                        {t("contact.scanQrHint")}
                     </p>
                     <img
                         src={qrCodeUrl}

@@ -23,6 +23,7 @@ import {
 } from "react-icons/fa"
 import axios from "@/services/api"
 import AboutPageSkeleton from "@/components/skeletons/AboutPageSkeleton"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Icon mapping
 const iconMap = {
@@ -48,6 +49,7 @@ export default function AboutPageContent() {
     const [error, setError] = useState(null)
     const [selectedImage, setSelectedImage] = useState(null)
     const [selectedSlide, setSelectedSlide] = useState(null)
+    const { t } = useLanguage()
 
     useEffect(() => {
         fetchAllContent()
@@ -121,13 +123,13 @@ export default function AboutPageContent() {
             <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
                 <div className="text-center max-w-md mx-auto p-8">
                     <div className="text-6xl mb-4">😕</div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Something went wrong</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t("about.error")}</h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
                     <button
                         onClick={fetchAllContent}
                         className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
-                        Try Again
+                        {t("about.tryAgain")}
                     </button>
                 </div>
             </div>
@@ -230,14 +232,14 @@ export default function AboutPageContent() {
                         className="text-center text-white max-w-4xl mx-auto"
                     >
                         <h1 className="text-2xl md:text-3xl lg:text-6xl font-bold mb-4 leading-tight drop-shadow-lg">
-                            {displaySliders[currentSlide]?.title || 'About EMCC'}
+                            {displaySliders[currentSlide]?.title || t("about.defaultTitle")}
                         </h1>
                         <button
                             onClick={() => openImageModal(displaySliders[currentSlide], currentSlide)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full font-semibold transition-all border border-white/30"
                         >
                             <FaExpand className="h-4 w-4" />
-                            View Details
+                            {t("orders.viewDetails")}
                         </button>
                     </motion.div>
                 </div>
@@ -297,7 +299,7 @@ export default function AboutPageContent() {
                             className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 shadow-xl"
                         >
                             <h2 className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
-                                {about.additional_data?.title || 'About EMCC'}
+                                {about.additional_data?.title || t("about.defaultTitle")}
                             </h2>
                             <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
                                 {about.content.split('\n').map((paragraph, index) => (
@@ -328,7 +330,7 @@ export default function AboutPageContent() {
                                             <FaGlobe className="h-6 w-6" />
                                         </div>
                                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            {vision.additional_data?.title || 'Vision'}
+                                            {vision.additional_data?.title || t("about.visionFallback")}
                                         </h2>
                                     </div>
                                     <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -351,7 +353,7 @@ export default function AboutPageContent() {
                                             <FaRocket className="h-6 w-6" />
                                         </div>
                                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            {mission.additional_data?.title || 'Mission'}
+                                            {mission.additional_data?.title || t("about.missionFallback")}
                                         </h2>
                                     </div>
                                     <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -378,10 +380,10 @@ export default function AboutPageContent() {
                             className="text-center text-white mb-12"
                         >
                             <span className="text-sm font-semibold text-blue-200 uppercase tracking-wider">
-                                {motto.additional_data?.title || 'Core Motto'}
+                                {motto.additional_data?.title || t("about.coreMottoFallback")}
                             </span>
                             <h2 className="text-3xl md:text-4xl font-bold mt-2">
-                                {motto.additional_data?.subtitle || 'What Drives Us'}
+                                {motto.additional_data?.subtitle || t("about.whatDrivesUs")}
                             </h2>
                         </motion.div>
 
@@ -420,8 +422,8 @@ export default function AboutPageContent() {
                         viewport={{ once: true }}
                         className="text-center mb-5"
                     >
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Expertise</span>
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2">Our Services</h2>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{t("about.expertise")}</span>
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2">{t("about.ourServices")}</h2>
                     </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -461,8 +463,8 @@ export default function AboutPageContent() {
                         viewport={{ once: true }}
                         className="text-center mb-12"
                     >
-                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Lifestyle</span>
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2">STEM Products</h2>
+                        <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{t("about.lifestyle")}</span>
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mt-2">{t("about.stemProducts")}</h2>
                     </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -528,13 +530,13 @@ export default function AboutPageContent() {
                         className="space-y-6"
                     >
                         <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-semibold">
-                            Let's Work Together
+                            {t("about.letsWorkTogether")}
                         </div>
                         <h2 className="text-3xl md:text-5xl font-bold text-white">
-                            Ready to <span className="text-blue-200">Transform</span> Your Data?
+                            {t("about.ctaTitlePrefix")} <span className="text-blue-200">{t("about.ctaTitleHighlight")}</span> {t("about.ctaTitleSuffix")}
                         </h2>
                         <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                            Join thousands of organizations that trust EMCC for their data analytics and research needs.
+                            {t("about.ctaSubtitle")}
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <motion.a
@@ -543,7 +545,7 @@ export default function AboutPageContent() {
                                 whileTap={{ scale: 0.95 }}
                                 className="inline-flex items-center gap-2 px-10 py-4 bg-white text-blue-600 rounded-full font-bold shadow-xl hover:shadow-2xl transition-all"
                             >
-                                Get Started
+                                {t("services.getStarted")}
                                 <FaArrowRight />
                             </motion.a>
                             <motion.a
@@ -552,7 +554,7 @@ export default function AboutPageContent() {
                                 whileTap={{ scale: 0.95 }}
                                 className="inline-flex items-center gap-2 px-10 py-4 bg-transparent border-2 border-white text-white rounded-full font-bold hover:bg-white/10 transition-all"
                             >
-                                Contact Us
+                                {t("footer.contactUs")}
                             </motion.a>
                         </div>
                     </motion.div>

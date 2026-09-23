@@ -14,11 +14,13 @@ import {
 } from "react-icons/hi"
 import { API } from "@/services/api"
 import Cookies from "js-cookie"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function OrdersPage() {
     const [orders, setOrders] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
+    const { t } = useLanguage()
 
     useEffect(() => {
         const token = Cookies.get('auth_token')
@@ -62,6 +64,15 @@ export default function OrdersPage() {
         }
     }
 
+    // Translates the raw status value from the backend (always English -
+    // pending/paid/transported/completed/cancelled) into the current
+    // language for display, without changing what's actually stored/sent.
+    const getStatusLabel = (status) => {
+        const key = `orders.status${status ? status.charAt(0).toUpperCase() + status.slice(1) : ''}`
+        const translated = t(key)
+        return translated === key ? status : translated
+    }
+
     if (isLoading) {
         return (
             <div className="container mx-auto px-4 py-10">
@@ -81,13 +92,13 @@ export default function OrdersPage() {
         return (
             <div className="container mx-auto px-4 py-20 text-center">
                 <HiOutlineShoppingBag className="h-24 w-24 mx-auto text-gray-400 mb-4" />
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No orders yet</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">You haven't placed any orders yet.</p>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">{t("orders.noOrdersHeading")}</h2>
+                <p className="text-gray-500 dark:text-gray-400 mb-6">{t("orders.empty")}</p>
                 <Link
                     href="/products"
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    Start Shopping
+                    {t("orders.startShopping")}
                 </Link>
             </div>
         )
@@ -95,7 +106,7 @@ export default function OrdersPage() {
 
     return (
         <div className="container mx-auto px-4 py-10">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">My Orders</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{t("orders.title")}</h1>
 
             <div className="space-y-6">
                 {orders.map((order, index) => (
@@ -109,28 +120,28 @@ export default function OrdersPage() {
                         <div className="p-6">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
                                 <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Order #{order.id}</p>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("orders.orderNumber")} #{order.id}</p>
                                     <p className="text-sm text-gray-500 dark:text-gray-400">
                                         {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}
                                     </p>
                                 </div>
                                 <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                                     {getStatusIcon(order.status)}
-                                    <span className="capitalize">{order.status}</span>
+                                    <span className="capitalize">{getStatusLabel(order.status)}</span>
                                 </div>
                             </div>
 
                             <div className="border-t border-gray-200 dark:border-gray-800 pt-4">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="text-gray-600 dark:text-gray-400">Total Amount</p>
+                                        <p className="text-gray-600 dark:text-gray-400">{t("checkout.totalAmount")}</p>
                                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
                                             TSh {order.grand_total?.toLocaleString()}
                                         </p>
                                     </div>
                                     <Link href={`/orders/${order.id}`}>
                                         <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors">
-                                            View Details
+                                            {t("orders.viewDetails")}
                                         </button>
                                     </Link>
                                 </div>

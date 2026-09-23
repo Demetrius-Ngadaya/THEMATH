@@ -6,12 +6,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { HiOutlineChevronDown, HiOutlineSearch } from "react-icons/hi"
 
 import { API_BASE_URL as API_BASE } from "@/utils/apiConfig"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function FAQsPageContent() {
     const [searchQuery, setSearchQuery] = useState("")
     const [openFaq, setOpenFaq] = useState(null)
     const [faqs, setFaqs] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const { t } = useLanguage()
 
     useEffect(() => {
         axios
@@ -41,9 +43,9 @@ export default function FAQsPageContent() {
                     animate={{ opacity: 1, y: 0 }}
                     className="relative z-10 px-6 py-16 text-center"
                 >
-                    <h1 className="text-4xl font-bold text-white mb-4">Frequently Asked Questions</h1>
+                    <h1 className="text-4xl font-bold text-white mb-4">{t("faqs.title")}</h1>
                     <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
-                        Find answers to common questions about our products, shipping, returns, and more.
+                        {t("faqs.subtitle")}
                     </p>
 
                     {/* Search Bar */}
@@ -52,7 +54,7 @@ export default function FAQsPageContent() {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search FAQs..."
+                            placeholder={t("faqs.searchPlaceholder")}
                             className="w-full px-6 py-4 pr-12 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white"
                         />
                         <HiOutlineSearch className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-white/70" />
@@ -62,10 +64,10 @@ export default function FAQsPageContent() {
 
             {/* Loading / Empty states */}
             {isLoading && (
-                <p className="text-center text-gray-500">Loading FAQs...</p>
+                <p className="text-center text-gray-500">{t("faqs.loading")}</p>
             )}
             {!isLoading && filteredFaqs.length === 0 && (
-                <p className="text-center text-gray-500">No FAQs found.</p>
+                <p className="text-center text-gray-500">{t("faqs.noFaqsFound")}</p>
             )}
 
             {/* FAQs by Category */}
@@ -128,22 +130,22 @@ export default function FAQsPageContent() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8"
                 >
-                    <h2 className="text-2xl font-bold text-white mb-4">Still Need Help?</h2>
+                    <h2 className="text-2xl font-bold text-white mb-4">{t("faqs.stillNeedHelp")}</h2>
                     <p className="text-white/90 mb-6">
-                        Can't find the answer you're looking for? Our support team is here to help, or ask our chat assistant in the bottom-right corner.
+                        {t("faqs.stillNeedHelpSubtitle")}
                     </p>
                     <div className="flex gap-4 justify-center">
                         <a
                             href="/contact"
                             className="px-6 py-3 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-100 transition-colors"
                         >
-                            Contact Us
+                            {t("footer.contactUs")}
                         </a>
                         <a
                             href="/help"
                             className="px-6 py-3 bg-white/20 text-white rounded-full font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
                         >
-                            Visit Help Center
+                            {t("faqs.visitHelpCenter")}
                         </a>
                     </div>
                 </motion.div>

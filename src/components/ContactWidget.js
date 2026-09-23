@@ -8,6 +8,7 @@ import { HiOutlinePhone, HiOutlineX, HiOutlineMail, HiOutlineChatAlt } from "rea
 import { FaWhatsapp } from "react-icons/fa"
 
 import { API_BASE_URL as API_BASE } from "@/utils/apiConfig"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 // Env vars are only the fallback now — the admin-managed settings from the
 // database (same source the footer and contact page use) take priority.
@@ -19,6 +20,7 @@ export default function ContactWidget() {
     const pathname = usePathname()
     const [isOpen, setIsOpen] = useState(false)
     const [settings, setSettings] = useState(null)
+    const { t } = useLanguage()
 
     useEffect(() => {
         axios
@@ -40,7 +42,7 @@ export default function ContactWidget() {
     const options = [
         {
             key: "call",
-            label: "Call us",
+            label: t("contactWidget.callUs"),
             sublabel: PHONE_DISPLAY,
             icon: HiOutlinePhone,
             href: `tel:${PHONE_TEL}`,
@@ -49,7 +51,7 @@ export default function ContactWidget() {
         {
             key: "whatsapp",
             label: "WhatsApp",
-            sublabel: "Chat with us",
+            sublabel: t("contactWidget.chatWithUs"),
             icon: FaWhatsapp,
             href: `https://wa.me/${WHATSAPP_NUMBER}`,
             color: "bg-green-500",
@@ -58,14 +60,14 @@ export default function ContactWidget() {
         {
             key: "sms",
             label: "SMS",
-            sublabel: "Send a text",
+            sublabel: t("contactWidget.sendText"),
             icon: HiOutlineChatAlt,
             href: `sms:${PHONE_TEL}`,
             color: "bg-purple-500",
         },
         {
             key: "email",
-            label: "Email",
+            label: t("common.email"),
             sublabel: EMAIL,
             icon: HiOutlineMail,
             href: `mailto:${EMAIL}`,
@@ -84,7 +86,7 @@ export default function ContactWidget() {
                         className="mb-4 w-72 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden"
                     >
                         <div className="bg-gradient-to-r from-teal-600 to-green-600 px-4 py-3 flex justify-between items-center">
-                            <span className="text-white font-semibold">Get in touch</span>
+                            <span className="text-white font-semibold">{t("contactWidget.getInTouch")}</span>
                             <button onClick={() => setIsOpen(false)} className="text-white/90 hover:text-white">
                                 <HiOutlineX className="h-5 w-5" />
                             </button>
